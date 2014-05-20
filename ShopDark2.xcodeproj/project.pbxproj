@@ -1,0 +1,476 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EE5B1585192BF80F002CBFCD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE5B1584192BF80F002CBFCD /* Foundation.framework */; };
+		EE5B1587192BF80F002CBFCD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE5B1586192BF80F002CBFCD /* CoreGraphics.framework */; };
+		EE5B1589192BF80F002CBFCD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE5B1588192BF80F002CBFCD /* UIKit.framework */; };
+		EE5B158B192BF80F002CBFCD /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE5B158A192BF80F002CBFCD /* CoreData.framework */; };
+		EE5B1591192BF80F002CBFCD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EE5B158F192BF80F002CBFCD /* InfoPlist.strings */; };
+		EE5B1593192BF80F002CBFCD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B1592192BF80F002CBFCD /* main.m */; };
+		EE5B1597192BF80F002CBFCD /* DLSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B1596192BF80F002CBFCD /* DLSAppDelegate.m */; };
+		EE5B159A192BF80F002CBFCD /* ShopDark2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EE5B1598192BF80F002CBFCD /* ShopDark2.xcdatamodeld */; };
+		EE5B159C192BF80F002CBFCD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE5B159B192BF80F002CBFCD /* Images.xcassets */; };
+		EE5B15A3192BF80F002CBFCD /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE5B15A2192BF80F002CBFCD /* XCTest.framework */; };
+		EE5B15A4192BF80F002CBFCD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE5B1584192BF80F002CBFCD /* Foundation.framework */; };
+		EE5B15A5192BF80F002CBFCD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE5B1588192BF80F002CBFCD /* UIKit.framework */; };
+		EE5B15A6192BF80F002CBFCD /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE5B158A192BF80F002CBFCD /* CoreData.framework */; };
+		EE5B15AE192BF80F002CBFCD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EE5B15AC192BF80F002CBFCD /* InfoPlist.strings */; };
+		EE5B15B0192BF80F002CBFCD /* ShopDark2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B15AF192BF80F002CBFCD /* ShopDark2Tests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EE5B15A7192BF80F002CBFCD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE5B1579192BF80F002CBFCD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EE5B1580192BF80F002CBFCD;
+			remoteInfo = ShopDark2;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		EE5B1581192BF80F002CBFCD /* ShopDark2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShopDark2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE5B1584192BF80F002CBFCD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		EE5B1586192BF80F002CBFCD /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		EE5B1588192BF80F002CBFCD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		EE5B158A192BF80F002CBFCD /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		EE5B158E192BF80F002CBFCD /* ShopDark2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ShopDark2-Info.plist"; sourceTree = "<group>"; };
+		EE5B1590192BF80F002CBFCD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		EE5B1592192BF80F002CBFCD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		EE5B1594192BF80F002CBFCD /* ShopDark2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ShopDark2-Prefix.pch"; sourceTree = "<group>"; };
+		EE5B1595192BF80F002CBFCD /* DLSAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DLSAppDelegate.h; sourceTree = "<group>"; };
+		EE5B1596192BF80F002CBFCD /* DLSAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DLSAppDelegate.m; sourceTree = "<group>"; };
+		EE5B1599192BF80F002CBFCD /* ShopDark2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ShopDark2.xcdatamodel; sourceTree = "<group>"; };
+		EE5B159B192BF80F002CBFCD /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		EE5B15A1192BF80F002CBFCD /* ShopDark2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShopDark2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE5B15A2192BF80F002CBFCD /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		EE5B15AB192BF80F002CBFCD /* ShopDark2Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ShopDark2Tests-Info.plist"; sourceTree = "<group>"; };
+		EE5B15AD192BF80F002CBFCD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		EE5B15AF192BF80F002CBFCD /* ShopDark2Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShopDark2Tests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EE5B157E192BF80F002CBFCD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EE5B1587192BF80F002CBFCD /* CoreGraphics.framework in Frameworks */,
+				EE5B158B192BF80F002CBFCD /* CoreData.framework in Frameworks */,
+				EE5B1589192BF80F002CBFCD /* UIKit.framework in Frameworks */,
+				EE5B1585192BF80F002CBFCD /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE5B159E192BF80F002CBFCD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EE5B15A3192BF80F002CBFCD /* XCTest.framework in Frameworks */,
+				EE5B15A6192BF80F002CBFCD /* CoreData.framework in Frameworks */,
+				EE5B15A5192BF80F002CBFCD /* UIKit.framework in Frameworks */,
+				EE5B15A4192BF80F002CBFCD /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EE5B1578192BF80F002CBFCD = {
+			isa = PBXGroup;
+			children = (
+				EE5B158C192BF80F002CBFCD /* ShopDark2 */,
+				EE5B15A9192BF80F002CBFCD /* ShopDark2Tests */,
+				EE5B1583192BF80F002CBFCD /* Frameworks */,
+				EE5B1582192BF80F002CBFCD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EE5B1582192BF80F002CBFCD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EE5B1581192BF80F002CBFCD /* ShopDark2.app */,
+				EE5B15A1192BF80F002CBFCD /* ShopDark2Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EE5B1583192BF80F002CBFCD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EE5B1584192BF80F002CBFCD /* Foundation.framework */,
+				EE5B1586192BF80F002CBFCD /* CoreGraphics.framework */,
+				EE5B1588192BF80F002CBFCD /* UIKit.framework */,
+				EE5B158A192BF80F002CBFCD /* CoreData.framework */,
+				EE5B15A2192BF80F002CBFCD /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EE5B158C192BF80F002CBFCD /* ShopDark2 */ = {
+			isa = PBXGroup;
+			children = (
+				EE5B1595192BF80F002CBFCD /* DLSAppDelegate.h */,
+				EE5B1596192BF80F002CBFCD /* DLSAppDelegate.m */,
+				EE5B159B192BF80F002CBFCD /* Images.xcassets */,
+				EE5B1598192BF80F002CBFCD /* ShopDark2.xcdatamodeld */,
+				EE5B158D192BF80F002CBFCD /* Supporting Files */,
+			);
+			path = ShopDark2;
+			sourceTree = "<group>";
+		};
+		EE5B158D192BF80F002CBFCD /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				EE5B158E192BF80F002CBFCD /* ShopDark2-Info.plist */,
+				EE5B158F192BF80F002CBFCD /* InfoPlist.strings */,
+				EE5B1592192BF80F002CBFCD /* main.m */,
+				EE5B1594192BF80F002CBFCD /* ShopDark2-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EE5B15A9192BF80F002CBFCD /* ShopDark2Tests */ = {
+			isa = PBXGroup;
+			children = (
+				EE5B15AF192BF80F002CBFCD /* ShopDark2Tests.m */,
+				EE5B15AA192BF80F002CBFCD /* Supporting Files */,
+			);
+			path = ShopDark2Tests;
+			sourceTree = "<group>";
+		};
+		EE5B15AA192BF80F002CBFCD /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				EE5B15AB192BF80F002CBFCD /* ShopDark2Tests-Info.plist */,
+				EE5B15AC192BF80F002CBFCD /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		EE5B1580192BF80F002CBFCD /* ShopDark2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EE5B15B3192BF80F002CBFCD /* Build configuration list for PBXNativeTarget "ShopDark2" */;
+			buildPhases = (
+				EE5B157D192BF80F002CBFCD /* Sources */,
+				EE5B157E192BF80F002CBFCD /* Frameworks */,
+				EE5B157F192BF80F002CBFCD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShopDark2;
+			productName = ShopDark2;
+			productReference = EE5B1581192BF80F002CBFCD /* ShopDark2.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EE5B15A0192BF80F002CBFCD /* ShopDark2Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EE5B15B6192BF80F002CBFCD /* Build configuration list for PBXNativeTarget "ShopDark2Tests" */;
+			buildPhases = (
+				EE5B159D192BF80F002CBFCD /* Sources */,
+				EE5B159E192BF80F002CBFCD /* Frameworks */,
+				EE5B159F192BF80F002CBFCD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EE5B15A8192BF80F002CBFCD /* PBXTargetDependency */,
+			);
+			name = ShopDark2Tests;
+			productName = ShopDark2Tests;
+			productReference = EE5B15A1192BF80F002CBFCD /* ShopDark2Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EE5B1579192BF80F002CBFCD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = DLS;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Jason Schneider";
+				TargetAttributes = {
+					EE5B15A0192BF80F002CBFCD = {
+						TestTargetID = EE5B1580192BF80F002CBFCD;
+					};
+				};
+			};
+			buildConfigurationList = EE5B157C192BF80F002CBFCD /* Build configuration list for PBXProject "ShopDark2" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = EE5B1578192BF80F002CBFCD;
+			productRefGroup = EE5B1582192BF80F002CBFCD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EE5B1580192BF80F002CBFCD /* ShopDark2 */,
+				EE5B15A0192BF80F002CBFCD /* ShopDark2Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EE5B157F192BF80F002CBFCD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EE5B1591192BF80F002CBFCD /* InfoPlist.strings in Resources */,
+				EE5B159C192BF80F002CBFCD /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE5B159F192BF80F002CBFCD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EE5B15AE192BF80F002CBFCD /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EE5B157D192BF80F002CBFCD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EE5B1597192BF80F002CBFCD /* DLSAppDelegate.m in Sources */,
+				EE5B1593192BF80F002CBFCD /* main.m in Sources */,
+				EE5B159A192BF80F002CBFCD /* ShopDark2.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE5B159D192BF80F002CBFCD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EE5B15B0192BF80F002CBFCD /* ShopDark2Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EE5B15A8192BF80F002CBFCD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EE5B1580192BF80F002CBFCD /* ShopDark2 */;
+			targetProxy = EE5B15A7192BF80F002CBFCD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		EE5B158F192BF80F002CBFCD /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EE5B1590192BF80F002CBFCD /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		EE5B15AC192BF80F002CBFCD /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EE5B15AD192BF80F002CBFCD /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		EE5B15B1192BF80F002CBFCD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		EE5B15B2192BF80F002CBFCD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		EE5B15B4192BF80F002CBFCD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ShopDark2/ShopDark2-Prefix.pch";
+				INFOPLIST_FILE = "ShopDark2/ShopDark2-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		EE5B15B5192BF80F002CBFCD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ShopDark2/ShopDark2-Prefix.pch";
+				INFOPLIST_FILE = "ShopDark2/ShopDark2-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		EE5B15B7192BF80F002CBFCD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ShopDark2.app/ShopDark2";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ShopDark2/ShopDark2-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "ShopDark2Tests/ShopDark2Tests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		EE5B15B8192BF80F002CBFCD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ShopDark2.app/ShopDark2";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ShopDark2/ShopDark2-Prefix.pch";
+				INFOPLIST_FILE = "ShopDark2Tests/ShopDark2Tests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EE5B157C192BF80F002CBFCD /* Build configuration list for PBXProject "ShopDark2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE5B15B1192BF80F002CBFCD /* Debug */,
+				EE5B15B2192BF80F002CBFCD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EE5B15B3192BF80F002CBFCD /* Build configuration list for PBXNativeTarget "ShopDark2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE5B15B4192BF80F002CBFCD /* Debug */,
+				EE5B15B5192BF80F002CBFCD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		EE5B15B6192BF80F002CBFCD /* Build configuration list for PBXNativeTarget "ShopDark2Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE5B15B7192BF80F002CBFCD /* Debug */,
+				EE5B15B8192BF80F002CBFCD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		EE5B1598192BF80F002CBFCD /* ShopDark2.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				EE5B1599192BF80F002CBFCD /* ShopDark2.xcdatamodel */,
+			);
+			currentVersion = EE5B1599192BF80F002CBFCD /* ShopDark2.xcdatamodel */;
+			path = ShopDark2.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = EE5B1579192BF80F002CBFCD /* Project object */;
+}
