@@ -22,6 +22,10 @@
 		EE5B15A6192BF80F002CBFCD /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE5B158A192BF80F002CBFCD /* CoreData.framework */; };
 		EE5B15AE192BF80F002CBFCD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EE5B15AC192BF80F002CBFCD /* InfoPlist.strings */; };
 		EE5B15B0192BF80F002CBFCD /* ShopDark2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B15AF192BF80F002CBFCD /* ShopDark2Tests.m */; };
+		EE5B15BC192BF842002CBFCD /* main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE5B15BB192BF842002CBFCD /* main.storyboard */; };
+		EE5B15BF192BFDF6002CBFCD /* DLSViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B15BE192BFDF6002CBFCD /* DLSViewController.m */; };
+		EE5B15C5192C12E9002CBFCD /* DLSList.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B15C4192C12E9002CBFCD /* DLSList.m */; };
+		EE5B15CB192C1330002CBFCD /* DLSListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B15CA192C1330002CBFCD /* DLSListItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +57,13 @@
 		EE5B15AB192BF80F002CBFCD /* ShopDark2Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ShopDark2Tests-Info.plist"; sourceTree = "<group>"; };
 		EE5B15AD192BF80F002CBFCD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		EE5B15AF192BF80F002CBFCD /* ShopDark2Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShopDark2Tests.m; sourceTree = "<group>"; };
+		EE5B15BB192BF842002CBFCD /* main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = main.storyboard; sourceTree = "<group>"; };
+		EE5B15BD192BFDF6002CBFCD /* DLSViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLSViewController.h; sourceTree = "<group>"; };
+		EE5B15BE192BFDF6002CBFCD /* DLSViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLSViewController.m; sourceTree = "<group>"; };
+		EE5B15C3192C12E9002CBFCD /* DLSList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLSList.h; sourceTree = "<group>"; };
+		EE5B15C4192C12E9002CBFCD /* DLSList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLSList.m; sourceTree = "<group>"; };
+		EE5B15C9192C1330002CBFCD /* DLSListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLSListItem.h; sourceTree = "<group>"; };
+		EE5B15CA192C1330002CBFCD /* DLSListItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLSListItem.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,8 +126,15 @@
 		EE5B158C192BF80F002CBFCD /* ShopDark2 */ = {
 			isa = PBXGroup;
 			children = (
+				EE5B15BB192BF842002CBFCD /* main.storyboard */,
 				EE5B1595192BF80F002CBFCD /* DLSAppDelegate.h */,
 				EE5B1596192BF80F002CBFCD /* DLSAppDelegate.m */,
+				EE5B15BD192BFDF6002CBFCD /* DLSViewController.h */,
+				EE5B15BE192BFDF6002CBFCD /* DLSViewController.m */,
+				EE5B15C3192C12E9002CBFCD /* DLSList.h */,
+				EE5B15C4192C12E9002CBFCD /* DLSList.m */,
+				EE5B15C9192C1330002CBFCD /* DLSListItem.h */,
+				EE5B15CA192C1330002CBFCD /* DLSListItem.m */,
 				EE5B159B192BF80F002CBFCD /* Images.xcassets */,
 				EE5B1598192BF80F002CBFCD /* ShopDark2.xcdatamodeld */,
 				EE5B158D192BF80F002CBFCD /* Supporting Files */,
@@ -231,6 +249,7 @@
 			files = (
 				EE5B1591192BF80F002CBFCD /* InfoPlist.strings in Resources */,
 				EE5B159C192BF80F002CBFCD /* Images.xcassets in Resources */,
+				EE5B15BC192BF842002CBFCD /* main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,8 +268,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE5B15CB192C1330002CBFCD /* DLSListItem.m in Sources */,
+				EE5B15BF192BFDF6002CBFCD /* DLSViewController.m in Sources */,
 				EE5B1597192BF80F002CBFCD /* DLSAppDelegate.m in Sources */,
 				EE5B1593192BF80F002CBFCD /* main.m in Sources */,
+				EE5B15C5192C12E9002CBFCD /* DLSList.m in Sources */,
 				EE5B159A192BF80F002CBFCD /* ShopDark2.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
