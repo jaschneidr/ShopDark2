@@ -95,7 +95,7 @@
         if (sender == self.textField.delegate)
         {
 
-            if ((self.textField.text.length > 0) && ([self.cellIdentifier  isEqual:@"listCell"]))
+            if ((self.textField.text.length > 0) && ([self.cellIdentifier  isEqualToString:@"listCell"]))
             {
                 NSManagedObjectContext *context = [self managedObjectContext];
                 //Create and save a new Managed Object
@@ -110,7 +110,7 @@
                     NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
                 }
             }
-            else if ((self.textField.text.length > 0) && ([self.cellIdentifier  isEqual:@"listItemsPrototype"]))
+            else if ((self.textField.text.length > 0) && ([self.cellIdentifier  isEqualToString:@"listItemsPrototype"]))
             {
                 NSManagedObjectContext *context = [self managedObjectContext];
                 //Create and save a new Managed Object
@@ -149,6 +149,8 @@
         return;
     }
 }
+
+
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
@@ -228,29 +230,42 @@
 
 
 #pragma mark - Table view delegate
-/*
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    NSManagedObject *tappedItem = [self.lists objectAtIndex:indexPath.row];
-    
-    // Set the value for completed upon tapping a cell
-    
-    BOOL completed = [[tappedItem valueForKey:@"completed"] boolValue];
-    if (completed) {
-        [tappedItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
-        [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-        [self saveStatus:tappedItem];
-    }
-    else
+    if ([self.cellIdentifier isEqualToString:@"listCell"])
     {
-        [tappedItem setValue:[NSNumber numberWithBool:YES] forKey:@"completed"];
-        [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-        [self saveStatus:tappedItem];
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        NSManagedObject *tappedItem = [self.lists objectAtIndex:indexPath.row];
+        self.shoppingList = [[DLSList alloc] init];
+        self.shoppingList.listName = [tappedItem valueForKey:@"listName"];
+        [self performSegueWithIdentifier:@"loadShoppingList" sender:self];
+
+    }
+    
+    else if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
+    {
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        NSManagedObject *tappedItem = [self.lists objectAtIndex:indexPath.row];
+        self.listItem = [[DLSListItem alloc] init];
+        self.listItem.itemName = [tappedItem valueForKey:@"itemName"];
+        // Set the value for completed upon tapping a cell
+        
+        BOOL completed = [[tappedItem valueForKey:@"completed"] boolValue];
+        if (completed) {
+            [tappedItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+            [self saveStatus:tappedItem];
+        }
+        else
+        {
+            [tappedItem setValue:[NSNumber numberWithBool:YES] forKey:@"completed"];
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+            [self saveStatus:tappedItem];
+        }
     }
 }
 
-*/
 
 
 
