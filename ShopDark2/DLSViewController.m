@@ -16,8 +16,10 @@
 @property NSArray *fetchedListItems;
 @property NSMutableArray *lists;
 @property NSMutableArray *listItems;
+@property NSString *cellIdentifier;
 @property DLSListItem *listItem;
 @property DLSList *shoppingList;
+@property (weak, nonatomic) IBOutlet UILabel *windowTitle;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
 @property (nonatomic, assign) IBOutlet UITableView *tableView;
 
@@ -29,7 +31,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        self.cellIdentifier = @"listCell";
     }
     return self;
 }
@@ -38,8 +40,13 @@
 {
     [super viewDidLoad];
     self.lists = [[NSMutableArray alloc] init];
-    
+    self.cellIdentifier = @"listCell";
+
+    // add gesture recognizer to recognize taps within the table view for keyboard dismissal
+    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    [self.tableView addGestureRecognizer:gestureRecognizer];
     self.tableView.backgroundColor = [UIColor blackColor];
+    [self.tableView reloadData];
     // Do any additional setup after loading the view.
 }
 
@@ -55,6 +62,10 @@
     self.lists = [[managedObjectContext executeFetchRequest:fetchListsRequest error:nil] mutableCopy];
     
     // fetch List Items from the persistent data store if displaying a List in the tableView
+    NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] initWithEntityName:@"ListItem"];
+    [fetchListsRequest shouldRefreshRefetchedObjects];
+    [fetchListsRequest setSortDescriptors:@[displayOrder]];
+    self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:nil] mutableCopy];
     
     //reload the table, and scroll to the bottom
     [self.tableView reloadData];
@@ -68,27 +79,74 @@
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if (sender == self.textField.delegate)
+    if ([[segue identifier] isEqualToString:@"loadShoppingList"])
     {
-        if (self.textField.text.length > 0)
+        NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
+        NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+        NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] initWithEntityName:@"listItem"];
+        [fetchListItemsRequest shouldRefreshRefetchedObjects];
+        [fetchListItemsRequest setSortDescriptors:@[displayOrder]];
+        self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:nil] mutableCopy];
+        // access parent entity list's listName and set self.windowTitle.text to its value
+        self.cellIdentifier = @"listItemsPrototype";
+    }
+    else if ([[segue identifier] isEqualToString:@"keyboardReturn"])
+    {
+        if (sender == self.textField.delegate)
         {
-            NSManagedObjectContext *context = [self managedObjectContext];
-            //Create and save a new Managed Object
-            DLSViewController *destination = [segue destinationViewController];
-            NSManagedObject *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:context];
-            [newList setValue:self.textField.text forKey:@"listName"];
-            [newList setValue:[NSNumber numberWithInt:[destination.lists count]] forKey:@"displayOrder"];
-            
-            NSError *error = nil;
-            if (![context save:&error])
+
+            if ((self.textField.text.length > 0) && ([self.cellIdentifier  isEqual:@"listCell"]))
             {
-                NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+                NSManagedObjectContext *context = [self managedObjectContext];
+                //Create and save a new Managed Object
+                DLSViewController *destination = [segue destinationViewController];
+                NSManagedObject *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:context];
+                [newList setValue:self.textField.text forKey:@"listName"];
+                [newList setValue:[NSNumber numberWithInt:[destination.lists count]] forKey:@"displayOrder"];
+            
+                NSError *error = nil;
+                if (![context save:&error])
+                {
+                    NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+                }
+            }
+            else if ((self.textField.text.length > 0) && ([self.cellIdentifier  isEqual:@"listItemsPrototype"]))
+            {
+                NSManagedObjectContext *context = [self managedObjectContext];
+                //Create and save a new Managed Object
+                DLSViewController *destination = [segue destinationViewController];
+                NSManagedObject *newListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:context];
+                [newListItem setValue:self.textField.text forKey:@"listItemName"];
+                [newListItem setValue:[NSNumber numberWithInt:[destination.listItems count]] forKey:@"displayOrder"];
+                
+                NSError *error = nil;
+                if (![context save:&error])
+                {
+                    NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+                }
+            }
+            else
+            {
+                return;
             }
         }
-        else
-        {
-            return;
-        }
+    }
+    else if ([[segue identifier] isEqualToString:@"returnToLists"])
+    {
+        self.windowTitle.text = @"My ShopDark Lists";
+        self.cellIdentifier = @"listCell";
+        // fetch Lists from the persistent data store
+        NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
+        NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+        NSFetchRequest *fetchListsRequest = [[NSFetchRequest alloc] initWithEntityName:@"List"];
+        [fetchListsRequest shouldRefreshRefetchedObjects];
+        [fetchListsRequest setSortDescriptors:@[displayOrder]];
+        self.lists = [[managedObjectContext executeFetchRequest:fetchListsRequest error:nil] mutableCopy];
+    }
+    
+    else
+    {
+        return;
     }
 }
 
@@ -132,53 +190,40 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier forIndexPath:indexPath];
     
-// If displaying list of lists
-///
-////
-    static NSString *CellIdentifier = @"listCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    NSManagedObject *list = [self.lists objectAtIndex:indexPath.row];
-    
-    
-    // Set text according to list name
-    [cell.textLabel setText:[NSString stringWithFormat:@"%@", [list valueForKey:@"listName"]]];
-    // Customize font, text color, and size
-    cell.textLabel.textColor = [UIColor whiteColor];
-    UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 12.0];
-    cell.textLabel.font = cellFont;
-    return cell;
-    
-// If displaying a shopping list
-///
-////
-    /*
-    static NSString *CellIdentifier = @"listCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    NSManagedObject *listItem = [self.shoppingList objectAtIndex:indexPath.row];
-    
-    
-    // Set text according to list name
-    [cell.textLabel setText:[NSString stringWithFormat:@"%@", [list valueForKey:@"itemName"]]];
-    // Customize font, text color, and size
-    cell.textLabel.textColor = [UIColor whiteColor];
-    UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 12.0];
-    cell.textLabel.font = cellFont;
-    return cell;
-    
-    
-    // Configure the cell to display properly with a check mark for completed items and without for incomplete items
-    BOOL completed = [[toDoItem valueForKey:@"completed"] boolValue];
-    if (completed)
+    if ([self.cellIdentifier isEqualToString:@"listCell"])
     {
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        NSManagedObject *list = [self.lists objectAtIndex:indexPath.row];
+        
+        
+        // Set text according to list name
+        [cell.textLabel setText:[NSString stringWithFormat:@"%@", [list valueForKey:@"listName"]]];
+        // Customize font, text color, and size
+        cell.textLabel.textColor = [UIColor whiteColor];
+        UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 12.0];
+        cell.textLabel.font = cellFont;
+        return cell;
     }
+
+    else if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
+    {
+        NSManagedObject *listItem = [self.listItems objectAtIndex:indexPath.row];
+        
+        
+        // Set text according to list name
+        [cell.textLabel setText:[NSString stringWithFormat:@"%@", [listItem valueForKey:@"listItemName"]]];
+        // Customize font, text color, and size
+        cell.textLabel.textColor = [UIColor whiteColor];
+        UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 12.0];
+        cell.textLabel.font = cellFont;
+        return cell;
+    }
+    
     else
     {
-        cell.accessoryType = UITableViewCellAccessoryNone;
+        return cell;
     }
-     */
-    
 }
 
 
@@ -335,14 +380,9 @@
     
 }
 
--(void)loadInitialData
+-(void)dismissKeyboard
 {
-    DLSList *list1 = [[DLSList alloc] init];
-    list1.listName = @"Wegmans";
-    [self.lists addObject:list1];
-    DLSList *list2 = [[DLSList alloc] init];
-    list2.listName = @"Guitar Center";
-    [self.lists addObject:list2];
+    [self.textField resignFirstResponder];
 }
 
 @end

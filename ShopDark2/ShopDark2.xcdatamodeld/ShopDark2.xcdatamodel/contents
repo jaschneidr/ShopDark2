@@ -6,13 +6,13 @@
         <attribute name="listName" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="itemsInList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ListItem" inverseName="belongsToList" inverseEntity="ListItem" syncable="YES"/>
     </entity>
-    <entity name="ListItem" syncable="YES">
+    <entity name="ListItem" parentEntity="List" syncable="YES">
         <attribute name="completed" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="itemName" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="belongsToList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="List" inverseName="itemsInList" inverseEntity="List" syncable="YES"/>
     </entity>
     <elements>
-        <element name="List" positionX="-63" positionY="-18" width="128" height="105"/>
+        <element name="List" positionX="-405" positionY="-60" width="128" height="105"/>
         <element name="ListItem" positionX="-54" positionY="18" width="128" height="88"/>
     </elements>
 </model>
