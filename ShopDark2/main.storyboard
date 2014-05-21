@@ -46,7 +46,7 @@
                                 <textInputTraits key="textInputTraits" keyboardAppearance="alert" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
                                     <outlet property="delegate" destination="nHx-Yu-AQE" id="7Je-rj-B0B"/>
-                                    <segue destination="nHx-Yu-AQE" kind="modal" identifier="keyboardReturn" id="J7H-3J-GaD"/>
+                                    <segue destination="nHx-Yu-AQE" kind="modal" identifier="keyboardReturn" modalTransitionStyle="crossDissolve" animates="NO" id="J7H-3J-GaD"/>
                                 </connections>
                             </textField>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="My ShopDark Lists" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="41G-4A-lqU">

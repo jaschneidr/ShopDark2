@@ -213,7 +213,7 @@
 //
 ///
 ////
-///// Editing the tableView
+///// Editing the tableView and textField
 ////
 ///
 //
@@ -281,6 +281,19 @@
         [self.managedObjectContext save:&error];
     }
 }
+
+//
+//
+// Text Field
+//
+//
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    [self.textField endEditing:YES];
+}
+
+
 
 /*
  ///

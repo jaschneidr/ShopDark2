@@ -4,13 +4,15 @@
         <attribute name="creationDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="displayOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="listName" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="itemsInList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ListItem" inverseName="belongsToList" inverseEntity="ListItem" syncable="YES"/>
     </entity>
     <entity name="ListItem" syncable="YES">
         <attribute name="completed" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="itemName" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="belongsToList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="List" inverseName="itemsInList" inverseEntity="List" syncable="YES"/>
     </entity>
     <elements>
-        <element name="List" positionX="-63" positionY="-18" width="128" height="90"/>
-        <element name="ListItem" positionX="-54" positionY="18" width="128" height="75"/>
+        <element name="List" positionX="-63" positionY="-18" width="128" height="105"/>
+        <element name="ListItem" positionX="-54" positionY="18" width="128" height="88"/>
     </elements>
 </model>
