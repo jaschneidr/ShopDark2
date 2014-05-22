@@ -15,6 +15,7 @@
 @property NSMutableArray *lists;
 @property NSMutableArray *listItems;
 @property NSString *cellIdentifier;
+@property NSString *parentList;
 @property DLSListItem *listItem;
 @property DLSList *shoppingList;
 @property (weak, nonatomic) IBOutlet UILabel *windowTitle;
@@ -32,7 +33,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.cellIdentifier = @"listCell";
+        return self;
     }
     return self;
 }
@@ -42,6 +43,7 @@
     [super viewDidLoad];
     self.returnToListsButton.enabled = NO;
     self.lists = [[NSMutableArray alloc] init];
+    self.parentList = [[NSString alloc] init];
     self.cellIdentifier = @"listCell";
     self.editing = NO;
 
@@ -334,11 +336,19 @@
         else if ([self.listItems count] > 0)
         {
             NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
+
+            
+            NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] init];
+            NSEntityDescription *listItems = [NSEntityDescription entityForName:@"ListItem" inManagedObjectContext:managedObjectContext];
             NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-            NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] initWithEntityName:@"listItem"];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"belongsToList like %@", self.shoppingList.listName];
+            NSError *error;
+            
+            [fetchListItemsRequest setEntity:listItems];
+            [fetchListItemsRequest setPredicate:predicate];
             [fetchListItemsRequest shouldRefreshRefetchedObjects];
             [fetchListItemsRequest setSortDescriptors:@[displayOrder]];
-            self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:nil] mutableCopy];
+            self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:&error] mutableCopy];
             // access parent entity list's listName and set self.windowTitle.text to its value
             self.cellIdentifier = @"listItemsPrototype";
         }
