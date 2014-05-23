@@ -11,4 +11,14 @@
 
 @implementation DLSList
 
+@dynamic listName;
+@dynamic creationDate;
+@dynamic displayOrder;
+
+-(void)awakeFromInsert
+{
+    [super awakeFromInsert];
+    [self setCreationDate:[NSDate date]];
+}
+
 @end

@@ -4,9 +4,9 @@
         <attribute name="creationDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="displayOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="listName" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="itemsInList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ListItem" inverseName="belongsToList" inverseEntity="ListItem" syncable="YES"/>
+        <relationship name="itemsInList" optional="YES" toMany="YES" maxCount="500" deletionRule="Cascade" destinationEntity="ListItem" inverseName="belongsToList" inverseEntity="ListItem" syncable="YES"/>
     </entity>
-    <entity name="ListItem" parentEntity="List" syncable="YES">
+    <entity name="ListItem" representedClassName="DLSListItem" syncable="YES">
         <attribute name="completed" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="itemName" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="belongsToList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="List" inverseName="itemsInList" inverseEntity="List" syncable="YES"/>

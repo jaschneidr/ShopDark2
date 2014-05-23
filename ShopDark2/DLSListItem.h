@@ -10,7 +10,7 @@
 
 @interface DLSListItem : NSManagedObject
 
-@property NSString *itemName;
+@property (nonatomic, strong) NSString *itemName;
 @property BOOL *completed;
 @property (nonatomic, retain) NSNumber *displayOrder;
 

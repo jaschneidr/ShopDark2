@@ -10,4 +10,8 @@
 
 @implementation DLSListItem
 
+@dynamic completed;
+@dynamic itemName;
+@dynamic displayOrder;
+
 @end

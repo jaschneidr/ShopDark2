@@ -12,8 +12,8 @@
 
 @interface DLSList : NSManagedObject
 
-@property NSString *listName;
-@property NSDate *creationDate;
-@property (nonatomic, retain) NSNumber *displayOrder;
+@property (nonatomic, strong) NSString *listName;
+@property (nonatomic, strong) NSDate *creationDate;
+@property (nonatomic, strong) NSNumber *displayOrder;
 
 @end
