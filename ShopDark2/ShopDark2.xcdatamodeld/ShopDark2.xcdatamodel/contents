@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13D65" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="List" syncable="YES">
+    <entity name="List" representedClassName="DLSList" syncable="YES">
         <attribute name="creationDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="displayOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="listName" optional="YES" attributeType="String" syncable="YES"/>
@@ -12,7 +12,7 @@
         <relationship name="belongsToList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="List" inverseName="itemsInList" inverseEntity="List" syncable="YES"/>
     </entity>
     <elements>
-        <element name="List" positionX="-405" positionY="-60" width="128" height="105"/>
-        <element name="ListItem" positionX="-54" positionY="18" width="128" height="88"/>
+        <element name="List" positionX="-8055" positionY="-108" width="128" height="103"/>
+        <element name="ListItem" positionX="-7796" positionY="-43" width="128" height="88"/>
     </elements>
 </model>

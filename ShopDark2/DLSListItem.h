@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface DLSListItem : NSObject
+@interface DLSListItem : NSManagedObject
 
 @property NSString *itemName;
 @property BOOL *completed;

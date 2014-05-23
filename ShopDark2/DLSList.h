@@ -10,7 +10,7 @@
 #import "DLSListItem.h"
 
 
-@interface DLSList : NSObject
+@interface DLSList : NSManagedObject
 
 @property NSString *listName;
 @property NSDate *creationDate;

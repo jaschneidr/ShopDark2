@@ -44,25 +44,23 @@
     self.returnToListsButton.enabled = NO;
     self.lists = [[NSMutableArray alloc] init];
     self.parentList = [[NSString alloc] init];
-    self.cellIdentifier = @"listCell";
-    self.editing = NO;
+    self.cellIdentifier = [[NSString alloc] init];
 
     self.tableView.backgroundColor = [UIColor blackColor];
     [self.tableView reloadData];
     // Do any additional setup after loading the view.
-    if ([self.cellIdentifier isEqualToString:@"listCell"])
-    {
-        self.returnToListsButton.hidden = YES;
-        self.showHideButton.hidden = YES;
-        
-        
-    }
-    else if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
+
+    if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
     {
         self.returnToListsButton.enabled = YES;
         self.returnToListsButton.hidden = NO;
         self.showHideButton.enabled = YES;
         self.showHideButton.hidden = NO;
+    }
+    else
+    {
+        self.returnToListsButton.hidden = YES;
+        self.showHideButton.hidden = YES;
     }
 }
 
@@ -77,14 +75,8 @@
     [fetchListsRequest setSortDescriptors:@[displayOrder]];
     self.lists = [[managedObjectContext executeFetchRequest:fetchListsRequest error:nil] mutableCopy];
     
-    // fetch List Items from the persistent data store if displaying a List in the tableView
-    NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] initWithEntityName:@"ListItem"];
-    [fetchListsRequest shouldRefreshRefetchedObjects];
-    [fetchListsRequest setSortDescriptors:@[displayOrder]];
-    self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:nil] mutableCopy];
-    
-    //reload the table, and scroll to the bottom
     [self.tableView reloadData];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -123,34 +115,19 @@
     {
         return [self.listItems count];
     }
-    
-    
-    // else return lists count
-    
-    return [self.lists count];
+    else
+    {
+        return [self.lists count];
+    }
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier forIndexPath:indexPath];
     
-    if ([self.cellIdentifier isEqualToString:@"listCell"])
+    if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
     {
-        NSManagedObject *list = [self.lists objectAtIndex:indexPath.row];
-        
-        
-        // Set text according to list name
-        [cell.textLabel setText:[NSString stringWithFormat:@"%@", [list valueForKey:@"listName"]]];
-        // Customize font, text color, and size
-        cell.textLabel.textColor = [UIColor whiteColor];
-        UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 12.0];
-        cell.textLabel.font = cellFont;
-        return cell;
-    }
-
-    else if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
-    {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier forIndexPath:indexPath];
         NSManagedObject *listItem = [self.listItems objectAtIndex:indexPath.row];
         
         
@@ -165,6 +142,17 @@
     
     else
     {
+        NSString *cellID = @"listCell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID forIndexPath:indexPath];
+        NSManagedObject *list = [self.lists objectAtIndex:indexPath.row];
+        
+        
+        // Set text according to list name
+        [cell.textLabel setText:[NSString stringWithFormat:@"%@", [list valueForKey:@"listName"]]];
+        // Customize font, text color, and size
+        cell.textLabel.textColor = [UIColor whiteColor];
+        UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 12.0];
+        cell.textLabel.font = cellFont;
         return cell;
     }
 }
@@ -174,22 +162,15 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self.cellIdentifier isEqualToString:@"listCell"])
+    NSManagedObjectContext *context = [self managedObjectContext];
+    if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
     {
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
-        NSManagedObject *tappedItem = [self.lists objectAtIndex:indexPath.row];
-        self.shoppingList = [[DLSList alloc] init];
-        self.shoppingList.listName = [tappedItem valueForKey:@"listName"];
-        [self performSegueWithIdentifier:@"loadShoppingList" sender:self];
-
-    }
-    
-    else if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
-    {
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-        NSManagedObject *tappedItem = [self.lists objectAtIndex:indexPath.row];
+        NSEntityDescription *descListItems = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:self.managedObjectContext];
+        NSManagedObject *tappedItem = [[NSManagedObject alloc] initWithEntity:descListItems insertIntoManagedObjectContext:context];
         self.listItem = [[DLSListItem alloc] init];
-        self.listItem.itemName = [tappedItem valueForKey:@"itemName"];
+        tappedItem = [self.lists objectAtIndex:indexPath.row];
+        self.listItem.itemName = [tappedItem valueForKeyPath:@"itemName"];
         // Set the value for completed upon tapping a cell
         
         BOOL completed = [[tappedItem valueForKey:@"completed"] boolValue];
@@ -204,6 +185,15 @@
             [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
             [self saveStatus:tappedItem];
         }
+    }
+    
+    else
+    {
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        NSManagedObject *tappedItem = [self.lists objectAtIndex:indexPath.row];
+        self.shoppingList = [[DLSList alloc] init];
+        self.shoppingList.listName = [tappedItem valueForKey:@"listName"];
+        [self performSegueWithIdentifier:@"loadShoppingList" sender:self];
     }
 }
 
@@ -253,18 +243,39 @@
     NSManagedObjectContext *context = [self managedObjectContext];
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete Object from the database
-        [context deleteObject:[self.lists objectAtIndex:indexPath.row]];
         
-        NSError *error = nil;
-        if (![context save:&error]) {
-            NSLog(@"Can't delete! %@ %@", error, [error localizedDescription]);
-            return;
+        if ([self.cellIdentifier isEqualToString:@"listItemPrototype"])
+        {
+            // Delete Object from the database
+            [context deleteObject:[self.listItems objectAtIndex:indexPath.row]];
+            
+            NSError *error = nil;
+            if (![context save:&error]) {
+                NSLog(@"Can't delete! %@ %@", error, [error localizedDescription]);
+                return;
+            }
+            
+            //Remove the toDo from the table View
+            [self.listItems removeObjectAtIndex:indexPath.row];
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
         
-        //Remove the toDo from the table View
-        [self.lists removeObjectAtIndex:indexPath.row];
-        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        else
+        {
+            // Delete Object from the database
+            [context deleteObject:[self.lists objectAtIndex:indexPath.row]];
+            
+            NSError *error = nil;
+            if (![context save:&error]) {
+                NSLog(@"Can't delete! %@ %@", error, [error localizedDescription]);
+                return;
+            }
+            
+            //Remove the toDo from the table View
+            [self.lists removeObjectAtIndex:indexPath.row];
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }
+        
     }
     
     
@@ -327,31 +338,34 @@
     DLSListItem *placeholder = [[DLSListItem alloc] init];
     if ([[segue identifier] isEqualToString:@"loadShoppingList"])
     {
+        NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
+        NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription *fetchedListItems = [NSEntityDescription entityForName:@"ListItem" inManagedObjectContext:managedObjectContext];
+        NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"belongsToList like %@", self.shoppingList.listName];
+        NSError *error;
         
-        if ([self.listItems count] == 0)
+        if (self.listItems == nil)
         {
-            placeholder.itemName = @"Begin adding new items";
-            [self.listItems addObject:placeholder];
+            self.listItems = [[NSMutableArray alloc] init];
+            self.cellIdentifier = @"listItemsPrototype";
+            self.windowTitle.text = self.shoppingList.listName;
+            [self.tableView reloadData];
         }
-        else if ([self.listItems count] > 0)
+        else
         {
-            NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
-
-            
-            NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] init];
-            NSEntityDescription *listItems = [NSEntityDescription entityForName:@"ListItem" inManagedObjectContext:managedObjectContext];
-            NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"belongsToList like %@", self.shoppingList.listName];
-            NSError *error;
-            
-            [fetchListItemsRequest setEntity:listItems];
+            [fetchListItemsRequest setEntity:fetchedListItems];
             [fetchListItemsRequest setPredicate:predicate];
             [fetchListItemsRequest shouldRefreshRefetchedObjects];
             [fetchListItemsRequest setSortDescriptors:@[displayOrder]];
             self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:&error] mutableCopy];
+            
             // access parent entity list's listName and set self.windowTitle.text to its value
             self.cellIdentifier = @"listItemsPrototype";
+            self.windowTitle.text = self.shoppingList.listName;
+            [self.tableView reloadData];
         }
+        
     }
     
     else if ([[segue identifier] isEqualToString:@"keyboardReturn"])
@@ -392,10 +406,6 @@
                 {
                     NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
                 }
-            }
-            else
-            {
-                return;
             }
         }
     }
@@ -448,7 +458,7 @@
     return index;
 }
 
-- (void)saveStatus:(NSManagedObject *)toDoItem
+- (void)saveStatus:(NSManagedObject *)listItem
 {
     NSManagedObjectContext *context = [self managedObjectContext];
     
