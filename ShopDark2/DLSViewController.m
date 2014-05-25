@@ -323,7 +323,14 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [self performSegueWithIdentifier:@"keyboardReturn" sender:self];
+    if ([self.cellIdentifier isEqualToString:@"listCell"])
+    {
+        [self performSegueWithIdentifier:@"keyboardReturnAddItem" sender:self];
+    }
+    else
+    {
+        [self performSegueWithIdentifier:@"keyboardReturn" sender:self];
+    }
     return YES;
 }
 
@@ -399,43 +406,42 @@
     {
         if (sender == self.textField.delegate)
         {
+            // Create and save a new managed object List
+            DLSViewController *lists = [segue destinationViewController];
+            DLSList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
+            [newList setValue:self.textField.text forKey:@"listName"];
+            [newList setValue:[NSNumber numberWithInt:[self.lists count]] forKey:@"displayOrder"];
             
-            if ((self.textField.text.length > 0) && ([self.cellIdentifier isEqualToString:@"listItemsPrototype"]))
+            NSError *error = nil;
+            if (![managedObjectContext save:&error])
             {
-                DLSViewController *listView = [segue destinationViewController];
-                if ([placeholder.itemName isEqualToString:@"Begin adding new items"])
-                {
-                    [listView.listItems removeObject:placeholder];
-                }
-                
-                DLSListItem *newListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
-                [newListItem setValue:self.textField.text forKey:@"itemName"];
-                [newListItem setValue:[NSNumber numberWithInt:[self.listItems count]] forKey:@"displayOrder"];
-                
-                NSError *error = nil;
-                if (![managedObjectContext save:&error])
-                {
-                    NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
-                }
-                return;
+                NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
             }
-            else if ((self.textField.text.length > 0) && (![self.cellIdentifier isEqualToString:@"listItemsPrototype"]))
+            lists.cellIdentifier = @"listCell";
+            [lists.tableView reloadData];
+            return;
+        }
+    }
+    else if ([[segue identifier] isEqualToString:@"keyboardReturnAddItem"])
+    {
+        if (self.textField.text.length > 0)
+        {
+            DLSViewController *listView = [segue destinationViewController];
+            if ([placeholder.itemName isEqualToString:@"Begin adding new items"])
             {
-                // Create and save a new managed object List
-                DLSViewController *lists = [segue destinationViewController];
-                DLSList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
-                [newList setValue:self.textField.text forKey:@"listName"];
-                [newList setValue:[NSNumber numberWithInt:[self.lists count]] forKey:@"displayOrder"];
-                
-                NSError *error = nil;
-                if (![managedObjectContext save:&error])
-                {
-                    NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
-                }
-                lists.cellIdentifier = @"listCell";
-                [lists.tableView reloadData];
-                return;
+                [listView.listItems removeObject:placeholder];
             }
+            
+            DLSListItem *newListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
+            [newListItem setValue:self.textField.text forKey:@"itemName"];
+            [newListItem setValue:[NSNumber numberWithInt:[self.listItems count]] forKey:@"displayOrder"];
+            
+            NSError *error = nil;
+            if (![managedObjectContext save:&error])
+            {
+                NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+            }
+            return;
         }
     }
     else if ([[segue identifier] isEqualToString:@"returnToLists"])
