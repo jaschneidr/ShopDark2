@@ -10,7 +10,7 @@
 #import "DLSList.h"
 #import "DLSListItem.h"
 
-@interface DLSViewController () 
+@interface DLSViewController ()
 
 @property NSMutableArray *lists;
 @property NSMutableArray *listItems;
@@ -45,11 +45,11 @@
     self.lists = [[NSMutableArray alloc] init];
     self.segueID = [[NSString alloc] init];
     self.cellIdentifier = [[NSString alloc] init];
-
+    
     self.tableView.backgroundColor = [UIColor blackColor];
     [self.tableView reloadData];
     // Do any additional setup after loading the view.
-
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -77,7 +77,7 @@
     }
     
     [self.tableView reloadData];
-
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -97,7 +97,7 @@
  /////
  ////
  ///
-*/
+ */
 
 #pragma mark - Table view data source
 
@@ -163,7 +163,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
+    
     if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
     {
         
@@ -349,7 +349,6 @@
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    DLSViewController *destination = [[DLSViewController alloc] init];
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     NSEntityDescription *fetchedListItems = [NSEntityDescription entityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
     NSEntityDescription *fetchedLists = [NSEntityDescription entityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
@@ -359,7 +358,6 @@
     BOOL keyboardReturn = [self.segueID isEqualToString:@"keyboardReturn"];
     BOOL loadShoppingList = [self.segueID isEqualToString:@"loadShoppingList"];
     BOOL returnToLists = [self.segueID isEqualToString:@"returnToLists"];
-    
     
     if (loadShoppingList)
     {
@@ -383,11 +381,11 @@
             [fetchListItemsRequest setPredicate:predicate];
             [fetchListItemsRequest shouldRefreshRefetchedObjects];
             [fetchListItemsRequest setSortDescriptors:@[displayOrder]];
-            destination.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:&error] mutableCopy];
+            self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:&error] mutableCopy];
             
             // access parent entity list's listName and set self.windowTitle.text to its value
             self.cellIdentifier = @"listItemsPrototype";
-            destination.windowTitle.text = self.shoppingList.listName;
+            self.windowTitle.text = self.shoppingList.listName;
         }
         
     }
@@ -468,77 +466,6 @@
  ////
  ///
  */
-
-
--(void)loadShoppingList
-{
-    NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
-    NSEntityDescription *fetchedListItems = [NSEntityDescription entityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
-    DLSListItem *placeholder = [[DLSListItem alloc] initWithEntity:fetchedListItems insertIntoManagedObjectContext:managedObjectContext];
-    NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] init];
-    NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"belongsToList like %@", self.shoppingList.listName];
-    NSError *error;
-    
-    
-    if (self.listItems == nil)
-    {
-        self.listItems = [[NSMutableArray alloc] init];
-        self.cellIdentifier = @"listItemsPrototype";
-        self.windowTitle.text = self.shoppingList.listName;
-        [placeholder setValue:@"Add a new list" forKey:@"itemName"];
-    }
-    else
-    {
-        [fetchListItemsRequest setEntity:fetchedListItems];
-        [fetchListItemsRequest setPredicate:predicate];
-        [fetchListItemsRequest shouldRefreshRefetchedObjects];
-        [fetchListItemsRequest setSortDescriptors:@[displayOrder]];
-        self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:&error] mutableCopy];
-        
-        // access parent entity list's listName and set self.windowTitle.text to its value
-        self.cellIdentifier = @"listItemsPrototype";
-        self.windowTitle.text = self.shoppingList.listName;
-    }
-}
-
--(void)keyboardReturn
-{
-    if ((self.textField.text.length > 0) && ([self.cellIdentifier isEqualToString:@"listItemsPrototype"]))
-    {
-        
-        if ([placeholder.itemName isEqualToString:@"Begin adding new items"])
-        {
-            [self.listItems removeObject:placeholder];
-        }
-        
-        DLSListItem *newListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
-        [newListItem setValue:self.textField.text forKey:@"itemName"];
-        [newListItem setValue:[NSNumber numberWithInt:[self.listItems count]] forKey:@"displayOrder"];
-        
-        NSError *error = nil;
-        if (![managedObjectContext save:&error])
-        {
-            NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
-        }
-        return;
-    }
-    else if ((self.textField.text.length > 0) && (![self.cellIdentifier isEqualToString:@"listItemsPrototype"]))
-    {
-        // Create and save a new managed object List
-        DLSList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
-        [newList setValue:self.textField.text forKey:@"listName"];
-        [newList setValue:[NSNumber numberWithInt:[self.lists count]] forKey:@"displayOrder"];
-        
-        NSError *error = nil;
-        if (![managedObjectContext save:&error])
-        {
-            NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
-        }
-        return;
-    }
-}
-
 
 // set the managed object context
 - (NSManagedObjectContext *)managedObjectContext
