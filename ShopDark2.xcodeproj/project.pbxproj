@@ -24,8 +24,8 @@
 		EE5B15B0192BF80F002CBFCD /* ShopDark2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B15AF192BF80F002CBFCD /* ShopDark2Tests.m */; };
 		EE5B15BC192BF842002CBFCD /* main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE5B15BB192BF842002CBFCD /* main.storyboard */; };
 		EE5B15BF192BFDF6002CBFCD /* DLSViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B15BE192BFDF6002CBFCD /* DLSViewController.m */; };
-		EE5B15C5192C12E9002CBFCD /* DLSList.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B15C4192C12E9002CBFCD /* DLSList.m */; };
-		EE5B15CB192C1330002CBFCD /* DLSListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5B15CA192C1330002CBFCD /* DLSListItem.m */; };
+		EE944A261932AF5500A98A9E /* DLSListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = EE944A251932AF5500A98A9E /* DLSListItem.m */; };
+		EE944A291932AF5600A98A9E /* DLSList.m in Sources */ = {isa = PBXBuildFile; fileRef = EE944A281932AF5600A98A9E /* DLSList.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,10 +60,10 @@
 		EE5B15BB192BF842002CBFCD /* main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = main.storyboard; sourceTree = "<group>"; };
 		EE5B15BD192BFDF6002CBFCD /* DLSViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLSViewController.h; sourceTree = "<group>"; };
 		EE5B15BE192BFDF6002CBFCD /* DLSViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLSViewController.m; sourceTree = "<group>"; };
-		EE5B15C3192C12E9002CBFCD /* DLSList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLSList.h; sourceTree = "<group>"; };
-		EE5B15C4192C12E9002CBFCD /* DLSList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLSList.m; sourceTree = "<group>"; };
-		EE5B15C9192C1330002CBFCD /* DLSListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLSListItem.h; sourceTree = "<group>"; };
-		EE5B15CA192C1330002CBFCD /* DLSListItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLSListItem.m; sourceTree = "<group>"; };
+		EE944A241932AF5500A98A9E /* DLSListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLSListItem.h; sourceTree = "<group>"; };
+		EE944A251932AF5500A98A9E /* DLSListItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLSListItem.m; sourceTree = "<group>"; };
+		EE944A271932AF5600A98A9E /* DLSList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLSList.h; sourceTree = "<group>"; };
+		EE944A281932AF5600A98A9E /* DLSList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLSList.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,12 +131,12 @@
 				EE5B1596192BF80F002CBFCD /* DLSAppDelegate.m */,
 				EE5B15BD192BFDF6002CBFCD /* DLSViewController.h */,
 				EE5B15BE192BFDF6002CBFCD /* DLSViewController.m */,
-				EE5B15C3192C12E9002CBFCD /* DLSList.h */,
-				EE5B15C4192C12E9002CBFCD /* DLSList.m */,
-				EE5B15C9192C1330002CBFCD /* DLSListItem.h */,
-				EE5B15CA192C1330002CBFCD /* DLSListItem.m */,
 				EE5B159B192BF80F002CBFCD /* Images.xcassets */,
 				EE5B1598192BF80F002CBFCD /* ShopDark2.xcdatamodeld */,
+				EE944A271932AF5600A98A9E /* DLSList.h */,
+				EE944A281932AF5600A98A9E /* DLSList.m */,
+				EE944A241932AF5500A98A9E /* DLSListItem.h */,
+				EE944A251932AF5500A98A9E /* DLSListItem.m */,
 				EE5B158D192BF80F002CBFCD /* Supporting Files */,
 			);
 			path = ShopDark2;
@@ -268,11 +268,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE5B15CB192C1330002CBFCD /* DLSListItem.m in Sources */,
 				EE5B15BF192BFDF6002CBFCD /* DLSViewController.m in Sources */,
 				EE5B1597192BF80F002CBFCD /* DLSAppDelegate.m in Sources */,
+				EE944A291932AF5600A98A9E /* DLSList.m in Sources */,
 				EE5B1593192BF80F002CBFCD /* main.m in Sources */,
-				EE5B15C5192C12E9002CBFCD /* DLSList.m in Sources */,
+				EE944A261932AF5500A98A9E /* DLSListItem.m in Sources */,
 				EE5B159A192BF80F002CBFCD /* ShopDark2.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -470,6 +470,7 @@
 				EE5B15B5192BF80F002CBFCD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EE5B15B6192BF80F002CBFCD /* Build configuration list for PBXNativeTarget "ShopDark2Tests" */ = {
 			isa = XCConfigurationList;
@@ -478,6 +479,7 @@
 				EE5B15B8192BF80F002CBFCD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
