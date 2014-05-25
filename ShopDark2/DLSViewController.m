@@ -323,7 +323,7 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if ([self.cellIdentifier isEqualToString:@"listCell"])
+    if ([self.cellIdentifier isEqualToString:@"listItemPrototype"])
     {
         [self performSegueWithIdentifier:@"keyboardReturnAddItem" sender:self];
     }
@@ -477,6 +477,11 @@
 - (IBAction)keyboardReturn:(UIStoryboardSegue *)segue
 {
 
+}
+
+- (IBAction)keyboardReturnAddList:(UIStoryboardSegue *)segue
+{
+    
 }
 
 - (IBAction)loadShoppingList:(UIStoryboardSegue *)segue

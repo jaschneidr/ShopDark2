@@ -118,7 +118,7 @@
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardAppearance="alert" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
                                     <outlet property="delegate" destination="hhY-A5-NkN" id="bhF-7H-uM1"/>
-                                    <segue destination="hhY-A5-NkN" kind="modal" identifier="keyboardReturnAddItem" animates="NO" id="xGy-Fp-1Jf"/>
+                                    <segue destination="hhY-A5-NkN" kind="modal" identifier="keyboardReturn" animates="NO" id="xGy-Fp-1Jf"/>
                                 </connections>
                             </textField>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="WiO-5a-qtp">
