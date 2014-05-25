@@ -14,18 +14,21 @@
 
 @property NSMutableArray *lists;
 @property NSMutableArray *listItems;
-@property NSString *cellIdentifier;
-@property NSString *segueID;
+@property (nonatomic, strong) NSString *cellIdentifier;
 @property DLSListItem *listItem;
-@property DLSList *shoppingList;
+@property NSString *shoppingListName;
+@property NSString *windowTitleText;
 @property (weak, nonatomic) IBOutlet UILabel *windowTitle;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
 @property (nonatomic, assign) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UIButton *returnToListsButton;
+@property (weak, nonatomic) IBOutlet UITableView *listItemsTableView;
 @property (weak, nonatomic) IBOutlet UIButton *showHideButton;
+@property (weak, nonatomic) IBOutlet UIButton *returnToListsButton;
 @property (nonatomic, getter = isEditing) BOOL editing;
 
 @end
+
+
 
 @implementation DLSViewController
 
@@ -38,18 +41,24 @@
     return self;
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self.tableView reloadData];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.returnToListsButton.enabled = NO;
     self.lists = [[NSMutableArray alloc] init];
-    self.segueID = [[NSString alloc] init];
-    self.cellIdentifier = [[NSString alloc] init];
     
     self.tableView.backgroundColor = [UIColor blackColor];
     [self.tableView reloadData];
     // Do any additional setup after loading the view.
-    
+    if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
+    {
+        self.windowTitle.text = self.windowTitleText;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -75,7 +84,6 @@
         self.returnToListsButton.hidden = YES;
         self.showHideButton.hidden = YES;
     }
-    
     [self.tableView reloadData];
     
 }
@@ -193,8 +201,7 @@
     {
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
         DLSList *tappedItem = [self.lists objectAtIndex:indexPath.row];
-        self.shoppingList.listName = tappedItem.listName;
-        self.segueID = @"loadShoppingList";
+        self.shoppingListName = tappedItem.listName;
         [self performSegueWithIdentifier:@"loadShoppingList" sender:self];
     }
 }
@@ -316,7 +323,6 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    self.segueID = @"keyboardReturn";
     [self performSegueWithIdentifier:@"keyboardReturn" sender:self];
     return YES;
 }
@@ -352,27 +358,25 @@
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     NSEntityDescription *fetchedListItems = [NSEntityDescription entityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
     NSEntityDescription *fetchedLists = [NSEntityDescription entityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
-    
     DLSListItem *placeholder = [[DLSListItem alloc] initWithEntity:fetchedListItems insertIntoManagedObjectContext:managedObjectContext];
     
-    BOOL keyboardReturn = [self.segueID isEqualToString:@"keyboardReturn"];
-    BOOL loadShoppingList = [self.segueID isEqualToString:@"loadShoppingList"];
-    BOOL returnToLists = [self.segueID isEqualToString:@"returnToLists"];
-    
-    if (loadShoppingList)
+    if ([[segue identifier] isEqualToString:@"loadShoppingList"])
     {
         NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
         NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] init];
         NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"belongsToList like %@", self.shoppingList.listName];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"belongsToList like %@", self.shoppingListName];
         NSError *error;
+        DLSViewController *listView = [segue destinationViewController];
         
+        listView.shoppingListName = self.shoppingListName;
+        listView.cellIdentifier = @"listCellPrototype";
         
-        if (self.listItems == nil)
+        if (listView.listItems == nil)
         {
-            self.listItems = [[NSMutableArray alloc] init];
-            self.cellIdentifier = @"listItemsPrototype";
-            self.windowTitle.text = self.shoppingList.listName;
+            listView.listItems = [[NSMutableArray alloc] init];
+            listView.cellIdentifier = @"listItemsPrototype";
+            listView.windowTitleText = self.shoppingListName;
             [placeholder setValue:@"Add a new list" forKey:@"itemName"];
         }
         else
@@ -384,23 +388,24 @@
             self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:&error] mutableCopy];
             
             // access parent entity list's listName and set self.windowTitle.text to its value
-            self.cellIdentifier = @"listItemsPrototype";
-            self.windowTitle.text = self.shoppingList.listName;
+            listView.cellIdentifier = @"listItemsPrototype";
+            listView.windowTitle.text = self.shoppingListName;
         }
+        [listView.tableView reloadData];
         
     }
     
-    else if (keyboardReturn)
+    else if ([[segue identifier] isEqualToString:@"keyboardReturn"])
     {
         if (sender == self.textField.delegate)
         {
             
             if ((self.textField.text.length > 0) && ([self.cellIdentifier isEqualToString:@"listItemsPrototype"]))
             {
-                
+                DLSViewController *listView = [segue destinationViewController];
                 if ([placeholder.itemName isEqualToString:@"Begin adding new items"])
                 {
-                    [self.listItems removeObject:placeholder];
+                    [listView.listItems removeObject:placeholder];
                 }
                 
                 DLSListItem *newListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
@@ -417,6 +422,7 @@
             else if ((self.textField.text.length > 0) && (![self.cellIdentifier isEqualToString:@"listItemsPrototype"]))
             {
                 // Create and save a new managed object List
+                DLSViewController *lists = [segue destinationViewController];
                 DLSList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
                 [newList setValue:self.textField.text forKey:@"listName"];
                 [newList setValue:[NSNumber numberWithInt:[self.lists count]] forKey:@"displayOrder"];
@@ -426,14 +432,17 @@
                 {
                     NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
                 }
+                lists.cellIdentifier = @"listCell";
+                [lists.tableView reloadData];
                 return;
             }
         }
     }
-    else if (returnToLists)
+    else if ([[segue identifier] isEqualToString:@"returnToLists"])
     {
-        self.windowTitle.text = @"My ShopDark Lists";
-        self.cellIdentifier = @"listCell";
+        DLSViewController *lists = [segue destinationViewController];
+        lists.windowTitle.text = @"My ShopDark Lists";
+        lists.cellIdentifier = @"listCell";
         
         
         // fetch Lists from the persistent data store
@@ -443,8 +452,7 @@
         [fetchListsRequest setEntity:fetchedLists];
         [fetchListsRequest shouldRefreshRefetchedObjects];
         [fetchListsRequest setSortDescriptors:@[displayOrder]];
-        self.lists = [[managedObjectContext executeFetchRequest:fetchListsRequest error:nil] mutableCopy];
-        
+        lists.lists = [[managedObjectContext executeFetchRequest:fetchListsRequest error:nil] mutableCopy];
         return;
     }
     
@@ -453,6 +461,21 @@
         return;
     }
     
+}
+
+- (IBAction)returnToLists:(UIStoryboardSegue *)segue
+{
+
+}
+
+- (IBAction)keyboardReturn:(UIStoryboardSegue *)segue
+{
+
+}
+
+- (IBAction)loadShoppingList:(UIStoryboardSegue *)segue
+{
+
 }
 
 
@@ -501,5 +524,6 @@
 {
     [self.textField resignFirstResponder];
 }
+
 
 @end

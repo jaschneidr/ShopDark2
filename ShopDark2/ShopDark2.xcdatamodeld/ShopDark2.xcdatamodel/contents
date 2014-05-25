@@ -8,11 +8,12 @@
     </entity>
     <entity name="ListItem" representedClassName="DLSListItem" syncable="YES">
         <attribute name="completed" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="displayOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="itemName" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="belongsToList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="List" inverseName="itemsInList" inverseEntity="List" syncable="YES"/>
     </entity>
     <elements>
         <element name="List" positionX="-8055" positionY="-108" width="128" height="103"/>
-        <element name="ListItem" positionX="-7796" positionY="-43" width="128" height="88"/>
+        <element name="ListItem" positionX="-7796" positionY="-43" width="128" height="105"/>
     </elements>
 </model>

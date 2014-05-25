@@ -7,7 +7,7 @@
         <!--View Controller - My ShopDark Lists-->
         <scene sceneID="Lh1-ZJ-IWG">
             <objects>
-                <viewController title="My ShopDark Lists" id="nHx-Yu-AQE" customClass="DLSViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="mainView" title="My ShopDark Lists" useStoryboardIdentifierAsRestorationIdentifier="YES" id="nHx-Yu-AQE" customClass="DLSViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="1Yp-b2-13G"/>
                         <viewControllerLayoutGuide type="bottom" id="cLl-Ro-IrT"/>
@@ -33,13 +33,13 @@
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         <connections>
-                                            <segue destination="nHx-Yu-AQE" kind="modal" identifier="loadShoppingList" animates="NO" id="sc9-nx-EYD"/>
+                                            <segue destination="hhY-A5-NkN" kind="modal" identifier="loadShoppingList" animates="NO" id="t5e-OH-dkB"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="checkmark" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="listItemsPrototype" id="8Uj-Q9-Of7">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="checkmark" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="listItemPrototype" id="xge-R8-p0N">
                                         <rect key="frame" x="0.0" y="66" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="8Uj-Q9-Of7" id="LAI-sE-w34">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xge-R8-p0N" id="YQE-v1-y0G">
                                             <rect key="frame" x="0.0" y="0.0" width="281" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -72,28 +72,8 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dfs-wL-aY8">
-                                <rect key="frame" x="20" y="518" width="280" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                <state key="normal" title="Hide Completed Items (inactive)">
-                                    <color key="titleColor" red="1" green="1" blue="1" alpha="0.75" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6LC-iI-xzE">
-                                <rect key="frame" x="20" y="65" width="64" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="&lt; Lists">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="nHx-Yu-AQE" kind="modal" identifier="returnToLists" id="17E-W1-fz3"/>
-                                </connections>
-                            </button>
                         </subviews>
-                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="fE4-QW-Y6p" secondAttribute="trailing" constant="20" id="dsi-b6-fbe"/>
                             <constraint firstItem="fE4-QW-Y6p" firstAttribute="leading" secondItem="h0q-0i-Wma" secondAttribute="leading" constant="20" id="hVV-G4-ZbW"/>
@@ -101,8 +81,6 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="returnToListsButton" destination="6LC-iI-xzE" id="CR0-5n-OAj"/>
-                        <outlet property="showHideButton" destination="Dfs-wL-aY8" id="2qh-pv-ZoQ"/>
                         <outlet property="tableView" destination="M9s-xI-z8G" id="7ys-L9-q5l"/>
                         <outlet property="textField" destination="fE4-QW-Y6p" id="2HJ-32-YqG"/>
                         <outlet property="windowTitle" destination="41G-4A-lqU" id="cy3-EM-J8A"/>
@@ -112,6 +90,108 @@
             </objects>
             <point key="canvasLocation" x="89" y="-143"/>
         </scene>
+        <!--View Controller - List Display-->
+        <scene sceneID="ozp-8S-JEo">
+            <objects>
+                <viewController storyboardIdentifier="listView" title="List Display" useStoryboardIdentifierAsRestorationIdentifier="YES" id="hhY-A5-NkN" customClass="DLSViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ywL-ZV-572"/>
+                        <viewControllerLayoutGuide type="bottom" id="BSs-PW-LhJ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="4Wi-MV-uwF">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="My ShopDark Lists" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9LF-RZ-OTw">
+                                <rect key="frame" x="20" y="25" width="280" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Add a new item to the list" borderStyle="roundedRect" textAlignment="center" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="cwe-sk-iah">
+                                <rect key="frame" x="20" y="103" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.2352878736" green="0.2352878736" blue="0.2352878736" alpha="0.66000000000000003" colorSpace="calibratedRGB"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardAppearance="alert" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="hhY-A5-NkN" id="bhF-7H-uM1"/>
+                                    <segue destination="hhY-A5-NkN" kind="modal" identifier="keyboardReturn" animates="NO" id="k3F-jD-Alo"/>
+                                </connections>
+                            </textField>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="WiO-5a-qtp">
+                                <rect key="frame" x="0.0" y="141" width="320" height="367"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="sectionIndexBackgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="checkmark" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="listItemsPrototype" id="hzE-H3-cET">
+                                        <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hzE-H3-cET" id="fKa-VU-D4q">
+                                            <rect key="frame" x="0.0" y="0.0" width="281" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="listCell" id="MUC-fH-Fm7">
+                                        <rect key="frame" x="0.0" y="66" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MUC-fH-Fm7" id="PIc-00-LS9">
+                                            <rect key="frame" x="0.0" y="0.0" width="287" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="hhY-A5-NkN" id="Knm-eR-dh0"/>
+                                    <outlet property="delegate" destination="hhY-A5-NkN" id="cCq-bo-ddY"/>
+                                </connections>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v7c-uV-3aq">
+                                <rect key="frame" x="20" y="521" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <state key="normal" title="Hide Completed Items (inactive)">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="0.75" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6LC-iI-xzE">
+                                <rect key="frame" x="20" y="60" width="64" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="&lt; Lists">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="nHx-Yu-AQE" kind="modal" identifier="returnToLists" animates="NO" id="Jaf-BQ-TwR"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="wrF-i0-BAL"/>
+                    <connections>
+                        <outlet property="listItemsTableView" destination="WiO-5a-qtp" id="bBh-1b-bhq"/>
+                        <outlet property="returnToListsButton" destination="6LC-iI-xzE" id="mPF-f1-xR2"/>
+                        <outlet property="showHideButton" destination="v7c-uV-3aq" id="toe-jf-2Ql"/>
+                        <outlet property="tableView" destination="WiO-5a-qtp" id="jDH-uz-MVo"/>
+                        <outlet property="textField" destination="cwe-sk-iah" id="ZCQ-s5-eKT"/>
+                        <outlet property="windowTitle" destination="9LF-RZ-OTw" id="AgW-xn-X63"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7nK-gb-UjN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="462" y="-143"/>
+        </scene>
     </scenes>
     <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
@@ -119,4 +199,8 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="t5e-OH-dkB"/>
+        <segue reference="Jaf-BQ-TwR"/>
+    </inferredMetricsTieBreakers>
 </document>
