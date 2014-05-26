@@ -202,7 +202,6 @@
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
         DLSList *tappedItem = [self.lists objectAtIndex:indexPath.row];
         self.shoppingListName = tappedItem.listName;
-        [self performSegueWithIdentifier:@"loadShoppingList" sender:self];
     }
 }
 
@@ -320,17 +319,9 @@
 //
 //
 
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if ([self.cellIdentifier isEqualToString:@"listItemPrototype"])
-    {
-        [self performSegueWithIdentifier:@"keyboardReturnAddItem" sender:self];
-    }
-    else
-    {
-        [self performSegueWithIdentifier:@"keyboardReturn" sender:self];
-    }
+    [self resignFirstResponder];
     return YES;
 }
 
@@ -479,7 +470,7 @@
 
 }
 
-- (IBAction)keyboardReturnAddList:(UIStoryboardSegue *)segue
+- (IBAction)keyboardReturnAddItem:(UIStoryboardSegue *)segue
 {
     
 }
