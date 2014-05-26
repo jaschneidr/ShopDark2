@@ -14,7 +14,7 @@
 
 @property NSMutableArray *lists;
 @property NSMutableArray *listItems;
-@property (nonatomic, strong) NSString *cellIdentifier;
+@property BOOL singleList;
 @property DLSListItem *listItem;
 @property NSString *shoppingListName;
 @property NSString *windowTitleText;
@@ -55,7 +55,7 @@
     self.tableView.backgroundColor = [UIColor blackColor];
     [self.tableView reloadData];
     // Do any additional setup after loading the view.
-    if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
+    if (self.singleList)
     {
         self.windowTitle.text = self.windowTitleText;
     }
@@ -72,7 +72,7 @@
     [fetchListsRequest setSortDescriptors:@[displayOrder]];
     self.lists = [[managedObjectContext executeFetchRequest:fetchListsRequest error:nil] mutableCopy];
     
-    if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
+    if (self.singleList)
     {
         self.returnToListsButton.enabled = YES;
         self.returnToListsButton.hidden = NO;
@@ -120,7 +120,7 @@
     // Return the number of rows in the section.
     
     // if list has been tapped, return shoppingList.listItems count
-    if ([self.cellIdentifier  isEqualToString:@"listItemsPrototype"])
+    if (self.singleList)
     {
         return [self.listItems count];
     }
@@ -134,9 +134,10 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
+    if (self.singleList)
     {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier forIndexPath:indexPath];
+        NSString *cellIdentifier = @"listItemPrototype";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
         DLSListItem *listItem = [self.listItems objectAtIndex:indexPath.row];
         
         
@@ -172,7 +173,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    if ([self.cellIdentifier isEqualToString:@"listItemsPrototype"])
+    if (self.singleList)
     {
         
         // If the item is tapped, set the completed value to TRUE
@@ -233,7 +234,8 @@
 // Allow rows to be re-ordered, also iterates through all cells because once one has moved, all are re-indexed
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    if ([self.cellIdentifier isEqualToString:@"listPrototypeCell"]) {
+    if (self.singleList)
+    {
         DLSListItem *objectToMove = [self.lists objectAtIndex:sourceIndexPath.row];
         [self.listItems removeObjectAtIndex:sourceIndexPath.row];
         [self.listItems insertObject:objectToMove atIndex:destinationIndexPath.row];
@@ -263,7 +265,7 @@
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         
-        if ([self.cellIdentifier isEqualToString:@"listItemPrototype"])
+        if (self.singleList)
         {
             // Delete Object from the database
             [context deleteObject:[self.listItems objectAtIndex:indexPath.row]];
@@ -321,7 +323,14 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [self resignFirstResponder];
+    if (self.singleList)
+    {
+        [self performSegueWithIdentifier:@"keyboardReturnAddItem" sender:self];
+    }
+    else
+    {
+        [self performSegueWithIdentifier:@"keyboardReturn" sender:self];
+    }
     return YES;
 }
 
@@ -368,12 +377,12 @@
         DLSViewController *listView = [segue destinationViewController];
         
         listView.shoppingListName = self.shoppingListName;
-        listView.cellIdentifier = @"listCellPrototype";
+        listView.singleList = YES;
         
         if (listView.listItems == nil)
         {
             listView.listItems = [[NSMutableArray alloc] init];
-            listView.cellIdentifier = @"listItemsPrototype";
+            listView.singleList = YES;
             listView.windowTitleText = self.shoppingListName;
             [placeholder setValue:@"Add a new list" forKey:@"itemName"];
         }
@@ -386,7 +395,7 @@
             self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:&error] mutableCopy];
             
             // access parent entity list's listName and set self.windowTitle.text to its value
-            listView.cellIdentifier = @"listItemsPrototype";
+            listView.singleList = YES;
             listView.windowTitle.text = self.shoppingListName;
         }
         [listView.tableView reloadData];
@@ -408,13 +417,15 @@
             {
                 NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
             }
-            lists.cellIdentifier = @"listCell";
+            lists.singleList = NO;
             [lists.tableView reloadData];
             return;
         }
     }
     else if ([[segue identifier] isEqualToString:@"keyboardReturnAddItem"])
     {
+        DLSViewController *listView = [segue destinationViewController];
+        listView.singleList = YES;
         if (self.textField.text.length > 0)
         {
             DLSViewController *listView = [segue destinationViewController];
@@ -432,6 +443,7 @@
             {
                 NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
             }
+            [listView.tableView reloadData];
             return;
         }
     }
@@ -439,7 +451,7 @@
     {
         DLSViewController *lists = [segue destinationViewController];
         lists.windowTitle.text = @"My ShopDark Lists";
-        lists.cellIdentifier = @"listCell";
+        lists.singleList= NO;
         
         
         // fetch Lists from the persistent data store
@@ -472,7 +484,7 @@
 
 - (IBAction)keyboardReturnAddItem:(UIStoryboardSegue *)segue
 {
-    
+    return;
 }
 
 - (IBAction)loadShoppingList:(UIStoryboardSegue *)segue
