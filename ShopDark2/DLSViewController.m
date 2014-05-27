@@ -140,8 +140,17 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-    NSMutableArray *itemsInListAtIndex = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-    self.listItems = itemsInListAtIndex;
+    NSMutableArray *itemsInListAtIndex = [[NSMutableArray alloc] init];
+    
+    if (self.hide)
+    {
+        itemsInListAtIndex = self.listItems;
+    }
+    else
+    {
+        itemsInListAtIndex = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+        self.listItems = itemsInListAtIndex;
+    }
     
     if (self.singleList)
     {
@@ -198,6 +207,7 @@
     
     if (self.singleList)
     {
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
         
         // If the item is tapped, set the completed value to TRUE
         
@@ -208,12 +218,14 @@
             [tappedItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
             [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
             [self saveStatus:tappedItem];
+            self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
         }
         else
         {
             [tappedItem setValue:[NSNumber numberWithBool:YES] forKey:@"completed"];
             [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
             [self saveStatus:tappedItem];
+            self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
         }
     }
     
@@ -458,14 +470,30 @@
         
         if (!self.hide)
         {
+            NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
             NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
             [listView.showHideButton setTitle:@"Show all items" forState:UIControlStateNormal];
             listView.hide = YES;
             listView.singleList = YES;
             listView.tappedList = self.tappedList;
-            listView.listItems = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
-            [listView.listItems sortUsingDescriptors:@[sort]];
+            placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
+            [placeholderArray sortUsingDescriptors:@[sort]];
+            listView.listItems = placeholderArray;
             [listView.tableView reloadData];
+            int i = 0;
+            for (DLSListItem *item in placeholderArray) {
+                BOOL completed = [[placeholderArray[i] valueForKey:@"completed"] boolValue];
+                if (completed) {
+                    NSLog(@"item name: %@",item.itemName);
+                    NSLog(@"completed YES");
+                }
+                else
+                {
+                    NSLog(@"item name: %@", item.itemName);
+                    NSLog(@"completed NO");
+                }
+                i++;
+            }
         }
         else if (self.hide)
         {
