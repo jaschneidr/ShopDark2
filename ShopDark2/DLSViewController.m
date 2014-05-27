@@ -143,6 +143,7 @@
 {
     NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
     NSMutableArray *itemsInListAtIndex = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+    self.listItems = itemsInListAtIndex;
     
     if (self.singleList)
     {
@@ -468,7 +469,6 @@
             listView.singleList = YES;
             listView.tappedList = self.tappedList;
             listView.listItems = self.listItems;
-            [listView.tableView.listItems]
             [listView.tableView reloadData];
             return;
         }
