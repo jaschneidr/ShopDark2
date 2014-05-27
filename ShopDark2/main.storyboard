@@ -151,7 +151,19 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="hhY-A5-NkN" kind="modal" identifier="hideShowCompleted" animates="NO" id="aV3-8I-I7x"/>
+                                    <segue destination="hhY-A5-NkN" kind="modal" identifier="hideCompleted" animates="NO" id="aV3-8I-I7x"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yYT-K0-UbE">
+                                <rect key="frame" x="20" y="521" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <state key="normal" title="Show All Items">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="0.75" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="hhY-A5-NkN" kind="modal" identifier="showCompleted" animates="NO" id="Xgs-xs-2r6"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6LC-iI-xzE">
@@ -170,9 +182,10 @@
                     </view>
                     <navigationItem key="navigationItem" id="wrF-i0-BAL"/>
                     <connections>
+                        <outlet property="hideButton" destination="v7c-uV-3aq" id="jxV-gi-MM3"/>
                         <outlet property="listItemsTableView" destination="WiO-5a-qtp" id="bBh-1b-bhq"/>
                         <outlet property="returnToListsButton" destination="6LC-iI-xzE" id="mPF-f1-xR2"/>
-                        <outlet property="showHideButton" destination="v7c-uV-3aq" id="toe-jf-2Ql"/>
+                        <outlet property="showButton" destination="yYT-K0-UbE" id="vBY-9E-wbF"/>
                         <outlet property="tableView" destination="WiO-5a-qtp" id="jDH-uz-MVo"/>
                         <outlet property="textField" destination="cwe-sk-iah" id="ZCQ-s5-eKT"/>
                         <outlet property="windowTitle" destination="9LF-RZ-OTw" id="AgW-xn-X63"/>

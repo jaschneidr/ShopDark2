@@ -19,7 +19,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *textField;
 @property (nonatomic, assign) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UITableView *listItemsTableView;
-@property (weak, nonatomic) IBOutlet UIButton *showHideButton;
+@property (weak, nonatomic) IBOutlet UIButton *hideButton;
+@property (weak, nonatomic) IBOutlet UIButton *showButton;
 @property (weak, nonatomic) IBOutlet UIButton *returnToListsButton;
 @property (nonatomic, getter = isEditing) BOOL editing;
 @property BOOL singleList;
@@ -55,6 +56,33 @@
     [getParentLists shouldRefreshRefetchedObjects];
     self.lists = [[managedObjectContext executeFetchRequest:getParentLists error:nil] mutableCopy];
     
+    if (self.singleList)
+    {
+        self.returnToListsButton.enabled = YES;
+        self.returnToListsButton.hidden = NO;
+        
+        if (self.hide)
+        {
+            self.hideButton.enabled = NO;
+            self.hideButton.hidden = YES;
+            self.showButton.enabled = YES;
+            self.showButton.hidden = NO;
+        }
+        else
+        {
+            self.hideButton.enabled = YES;
+            self.hideButton.hidden = NO;
+            self.showButton.enabled = NO;
+            self.showButton.hidden = YES;
+        }
+    }
+    else
+    {
+        self.returnToListsButton.hidden = YES;
+        self.hideButton.hidden = YES;
+        self.showButton.hidden = YES;
+    }
+    
     [self.tableView reloadData];
 }
 
@@ -77,19 +105,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-    if (self.singleList)
-    {
-        self.returnToListsButton.enabled = YES;
-        self.returnToListsButton.hidden = NO;
-        self.showHideButton.enabled = YES;
-        self.showHideButton.hidden = NO;
-    }
-    else
-    {
-        self.returnToListsButton.hidden = YES;
-        self.showHideButton.hidden = YES;
-    }
     [self.tableView reloadData];
     
 }
@@ -436,6 +451,7 @@
             return;
         }
     }
+    
     else if ([[segue identifier] isEqualToString:@"keyboardReturnAddItem"])
     {
         if (sender == self.textField.delegate)
@@ -460,52 +476,36 @@
                 return;
             }
         }
-        
-        return;
     }
-    else if ([[segue identifier] isEqualToString:@"hideShowCompleted"])
+    
+    else if ([[segue identifier] isEqualToString:@"hideCompleted"])
+    {
+        DLSViewController *listView = [segue destinationViewController];
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+
+        NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
+        NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
+        listView.hide = YES;
+        listView.singleList = YES;
+        listView.tappedList = self.tappedList;
+        placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
+        [placeholderArray sortUsingDescriptors:@[sort]];
+        listView.listItems = placeholderArray;
+        [listView.tableView reloadData];
+    }
+    
+    else if ([[segue identifier] isEqualToString:@"showCompleted"])
     {
         DLSViewController *listView = [segue destinationViewController];
         NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
         
-        if (!self.hide)
-        {
-            NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
-            NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
-            [listView.showHideButton setTitle:@"Show all items" forState:UIControlStateNormal];
-            listView.hide = YES;
-            listView.singleList = YES;
-            listView.tappedList = self.tappedList;
-            placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
-            [placeholderArray sortUsingDescriptors:@[sort]];
-            listView.listItems = placeholderArray;
-            [listView.tableView reloadData];
-            int i = 0;
-            for (DLSListItem *item in placeholderArray) {
-                BOOL completed = [[placeholderArray[i] valueForKey:@"completed"] boolValue];
-                if (completed) {
-                    NSLog(@"item name: %@",item.itemName);
-                    NSLog(@"completed YES");
-                }
-                else
-                {
-                    NSLog(@"item name: %@", item.itemName);
-                    NSLog(@"completed NO");
-                }
-                i++;
-            }
-        }
-        else if (self.hide)
-        {
-            
-            [listView.showHideButton setTitle:@"Hide completed items" forState:UIControlStateNormal];
-            listView.hide = NO;
-            listView.singleList = YES;
-            listView.tappedList = self.tappedList;
-            listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-            [listView.tableView reloadData];
-        }
+        listView.hide = NO;
+        listView.singleList = YES;
+        listView.tappedList = self.tappedList;
+        listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+        [listView.tableView reloadData];
     }
+    
     else if ([[segue identifier] isEqualToString:@"returnToLists"])
     {
         DLSViewController *lists = [segue destinationViewController];
