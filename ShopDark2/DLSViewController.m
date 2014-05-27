@@ -14,7 +14,6 @@
 
 @property NSMutableArray *lists;
 @property NSMutableArray *listItems;
-@property BOOL singleList;
 @property DLSList *tappedList;
 @property (weak, nonatomic) IBOutlet UILabel *windowTitle;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
@@ -23,6 +22,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *showHideButton;
 @property (weak, nonatomic) IBOutlet UIButton *returnToListsButton;
 @property (nonatomic, getter = isEditing) BOOL editing;
+@property BOOL singleList;
+@property BOOL hide;
 
 @end
 
@@ -41,8 +42,6 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    // fetch all parent objects
-    
     // fetch Lists from the persistent data store
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     NSEntityDescription *parentLists = [NSEntityDescription entityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
@@ -452,11 +451,39 @@
         
         return;
     }
+    else if ([[segue identifier] isEqualToString:@"hideShowCompleted"])
+    {
+        DLSViewController *listView = [segue destinationViewController];
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+        
+        if (!self.hide)
+        {
+            NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
+            [listView.showHideButton setTitle:@"Show all items" forState:UIControlStateNormal];
+            listView.hide = YES;
+            listView.singleList = YES;
+            listView.tappedList = self.tappedList;
+            listView.listItems = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
+            [listView.listItems sortUsingDescriptors:@[sort]];
+            [listView.tableView reloadData];
+        }
+        else if (self.hide)
+        {
+            
+            [listView.showHideButton setTitle:@"Hide completed items" forState:UIControlStateNormal];
+            listView.hide = NO;
+            listView.singleList = YES;
+            listView.tappedList = self.tappedList;
+            listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+            [listView.tableView reloadData];
+        }
+    }
     else if ([[segue identifier] isEqualToString:@"returnToLists"])
     {
         DLSViewController *lists = [segue destinationViewController];
         lists.windowTitle.text = @"My ShopDark Lists";
         lists.singleList = NO;
+        lists.hide = NO;
         return;
     }
     
