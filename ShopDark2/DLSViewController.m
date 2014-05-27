@@ -15,7 +15,6 @@
 @property NSMutableArray *lists;
 @property NSMutableArray *listItems;
 @property BOOL singleList;
-@property DLSListItem *listItem;
 @property DLSList *tappedList;
 @property (weak, nonatomic) IBOutlet UILabel *windowTitle;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
@@ -205,10 +204,6 @@
         
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
         DLSListItem *tappedItem = [self.listItems objectAtIndex:indexPath.row];
-        
-        
-        // Set the value for completed upon tapping a cell
-        
         BOOL completed = [[tappedItem valueForKey:@"completed"] boolValue];
         if (completed) {
             [tappedItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
@@ -303,8 +298,9 @@
             }
             
             //Remove the toDo from the table View
-            [self.listItems removeObjectAtIndex:indexPath.row];
-            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+            self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+            [self.tableView reloadData];
         }
         
         else
@@ -331,13 +327,27 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     [super setEditing:editing animated:animated];
     [self.tableView setEditing:editing animated:animated];
-    if(!editing) {
-        int i = 0;
-        for(DLSList *list in self.lists) {
-            list.displayOrder = [NSNumber numberWithInt:i++];
+    if(!editing)
+    {
+        if (self.singleList) {
+            int i = 0;
+            for (DLSListItem *item in self.listItems)
+            {
+                item.displayOrder = [NSNumber numberWithInt:i++];
+            }
         }
+        else
+        {
+            int i = 0;
+            for (DLSList *list in self.lists)
+            {
+                list.displayOrder = [NSNumber numberWithInt:i++];
+            }
+        }
+        
+        NSManagedObjectContext *context = [self managedObjectContext];
         NSError *error = nil;
-        [self.managedObjectContext save:&error];
+        [context save:&error];
     }
 }
 
@@ -389,36 +399,16 @@
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
-    NSEntityDescription *fetchedListItems = [NSEntityDescription entityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
-    DLSListItem *placeholder = [[DLSListItem alloc] initWithEntity:fetchedListItems insertIntoManagedObjectContext:managedObjectContext];
     
     if ([[segue identifier] isEqualToString:@"loadShoppingList"])
     {
         NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
         DLSViewController *listView = [segue destinationViewController];
-        
         listView.tappedList = self.tappedList;
         listView.singleList = YES;
-        
-        if (listView.listItems.count == 0)
-        {
-            listView.listItems = [[NSMutableArray alloc] init];
-            listView.singleList = YES;
-            listView.windowTitle.text = self.tappedList.listName;
-            [placeholder setValue:@"Begin adding list items" forKey:@"itemName"];
-            [placeholder setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
-            [listView.listItems addObject:placeholder];
-        }
-        else
-        {
-            listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[displayOrder]] mutableCopy];
-            
-            // access parent entity list's listName and set self.windowTitle.text to its value
-            listView.singleList = YES;
-            listView.windowTitle.text = self.tappedList.listName;
-            listView.windowTitle.textColor = [UIColor whiteColor];
-        }
-        
+        listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[displayOrder]] mutableCopy];
+        listView.windowTitle.text = self.tappedList.listName;
+        listView.windowTitle.textColor = [UIColor whiteColor];
     }
     
     else if ([[segue identifier] isEqualToString:@"keyboardReturn"])
@@ -430,12 +420,7 @@
             DLSList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
             [newList setValue:self.textField.text forKey:@"listName"];
             [newList setValue:[NSNumber numberWithInt:[self.lists count]] forKey:@"displayOrder"];
-            
-            NSError *error = nil;
-            if (![managedObjectContext save:&error])
-            {
-                NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
-            }
+            [self saveStatus:newList];
             lists.singleList = NO;
             [lists.tableView reloadData];
             return;
@@ -443,41 +428,36 @@
     }
     else if ([[segue identifier] isEqualToString:@"keyboardReturnAddItem"])
     {
-        if (self.textField.text.length > 0)
+        if (sender == self.textField.delegate)
         {
-            DLSViewController *listView = [segue destinationViewController];
-            NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
-            NSError *error;
-            
-            DLSListItem *newListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
-            DLSList *parentList = self.tappedList;
-            
-            
-            [newListItem setValue:self.textField.text forKey:@"itemName"];
-            [newListItem setValue:[NSNumber numberWithInt:[self.listItems count]] forKey:@"displayOrder"];
-            [newListItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
-            newListItem.belongsToList = parentList;
-            [parentList addItemsInListObject:newListItem];
-            [self.listItems addObject:newListItem];
-            NSLog(@"new list belongs to list %@", newListItem.belongsToList);
-            
-            if (![managedObjectContext save:&error])
+            if (self.textField.text.length > 0)
             {
-                NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+                DLSViewController *listView = [segue destinationViewController];
+                NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+                DLSListItem *newListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
+                
+                [newListItem setValue:self.textField.text forKey:@"itemName"];
+                [newListItem setValue:[NSNumber numberWithInt:[self.listItems count]] forKey:@"displayOrder"];
+                [newListItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
+                [self.tappedList addItemsInListObject:newListItem];
+                
+                
+                listView.singleList = YES;
+                listView.tappedList = self.tappedList;
+                listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+                [listView.tableView reloadData];
+                [self saveStatus:newListItem];
+                return;
             }
-            
-            listView.singleList = YES;
-            listView.tappedList = self.tappedList;
-            listView.listItems = self.listItems;
-            [listView.tableView reloadData];
-            return;
         }
+        
+        return;
     }
     else if ([[segue identifier] isEqualToString:@"returnToLists"])
     {
         DLSViewController *lists = [segue destinationViewController];
         lists.windowTitle.text = @"My ShopDark Lists";
-        lists.singleList= NO;
+        lists.singleList = NO;
         return;
     }
     
@@ -485,6 +465,8 @@
     {
         return;
     }
+    
+    return;
     
 }
 
@@ -500,7 +482,7 @@
 
 - (IBAction)keyboardReturnAddItem:(UIStoryboardSegue *)segue
 {
-    return;
+    
 }
 
 - (IBAction)loadShoppingList:(UIStoryboardSegue *)segue
