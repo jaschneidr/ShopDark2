@@ -398,7 +398,6 @@
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     
     if ([[segue identifier] isEqualToString:@"loadShoppingList"])
     {
