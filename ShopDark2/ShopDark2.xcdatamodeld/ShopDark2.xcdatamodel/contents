@@ -13,7 +13,7 @@
         <relationship name="belongsToList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="List" inverseName="itemsInList" inverseEntity="List" syncable="YES"/>
     </entity>
     <elements>
-        <element name="List" positionX="-8055" positionY="-108" width="128" height="103"/>
+        <element name="List" positionX="-8055" positionY="-108" width="128" height="105"/>
         <element name="ListItem" positionX="-7796" positionY="-43" width="128" height="105"/>
     </elements>
 </model>

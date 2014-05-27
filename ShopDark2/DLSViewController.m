@@ -141,15 +141,16 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    DLSList *listAtIndex = [self.lists objectAtIndex:indexPath.row];
     NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-    NSArray *itemsInListAtIndex = [[listAtIndex.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]];
+    NSMutableArray *itemsInListAtIndex = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
     
     if (self.singleList)
     {
         NSString *cellIdentifier = @"listItemPrototype";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
         
+        
+        // If the itemsInListAtIndex array is populated, do the following
         if (!(itemsInListAtIndex.count == 0))
         {
             DLSListItem *listItem = [itemsInListAtIndex objectAtIndex:indexPath.row];
@@ -292,7 +293,7 @@
         if (self.singleList)
         {
             // Delete Object from the database
-            [context deleteObject:[self.listItems objectAtIndex:indexPath.row]];
+            [self.tappedList removeItemsInListObject:[self.listItems objectAtIndex:indexPath.row]];
             
             NSError *error = nil;
             if (![context save:&error]) {
@@ -388,17 +389,11 @@
 {
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     NSEntityDescription *fetchedListItems = [NSEntityDescription entityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
-    NSEntityDescription *fetchedLists = [NSEntityDescription entityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
     DLSListItem *placeholder = [[DLSListItem alloc] initWithEntity:fetchedListItems insertIntoManagedObjectContext:managedObjectContext];
     
     if ([[segue identifier] isEqualToString:@"loadShoppingList"])
     {
-        NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
-        NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] init];
         NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-        
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"belongsToList like %@", self.tappedList];
-        NSError *error;
         DLSViewController *listView = [segue destinationViewController];
         
         listView.tappedList = self.tappedList;
@@ -410,22 +405,18 @@
             listView.singleList = YES;
             listView.windowTitle.text = self.tappedList.listName;
             [placeholder setValue:@"Begin adding list items" forKey:@"itemName"];
-            listView.listItems[0] = placeholder;
+            [placeholder setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
+            [listView.listItems addObject:placeholder];
         }
         else
         {
-            [fetchListItemsRequest setEntity:fetchedListItems];
-            [fetchListItemsRequest setPredicate:predicate];
-            [fetchListItemsRequest shouldRefreshRefetchedObjects];
-            [fetchListItemsRequest setSortDescriptors:@[displayOrder]];
-            listView.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:&error] mutableCopy];
+            listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[displayOrder]] mutableCopy];
             
             // access parent entity list's listName and set self.windowTitle.text to its value
             listView.singleList = YES;
             listView.windowTitle.text = self.tappedList.listName;
             listView.windowTitle.textColor = [UIColor whiteColor];
         }
-        [listView.tableView reloadData];
         
     }
     
@@ -451,28 +442,33 @@
     }
     else if ([[segue identifier] isEqualToString:@"keyboardReturnAddItem"])
     {
-        DLSViewController *listView = [segue destinationViewController];
-        listView.singleList = YES;
-        
         if (self.textField.text.length > 0)
         {
             DLSViewController *listView = [segue destinationViewController];
             NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
             NSError *error;
             
-            
             DLSListItem *newListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
+            DLSList *parentList = self.tappedList;
             
             
             [newListItem setValue:self.textField.text forKey:@"itemName"];
             [newListItem setValue:[NSNumber numberWithInt:[self.listItems count]] forKey:@"displayOrder"];
-            [newListItem setValue:self.tappedList forKey:@"belongsToList"];
+            [newListItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
+            newListItem.belongsToList = parentList;
+            [parentList addItemsInListObject:newListItem];
+            [self.listItems addObject:newListItem];
+            NSLog(@"new list belongs to list %@", newListItem.belongsToList);
             
             if (![managedObjectContext save:&error])
             {
                 NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
             }
+            
             listView.singleList = YES;
+            listView.tappedList = self.tappedList;
+            listView.listItems = self.listItems;
+            [listView.tableView.listItems]
             [listView.tableView reloadData];
             return;
         }
@@ -482,16 +478,6 @@
         DLSViewController *lists = [segue destinationViewController];
         lists.windowTitle.text = @"My ShopDark Lists";
         lists.singleList= NO;
-        
-        
-        // fetch Lists from the persistent data store
-        
-        NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-        NSFetchRequest *fetchListsRequest = [[NSFetchRequest alloc] init];
-        [fetchListsRequest setEntity:fetchedLists];
-        [fetchListsRequest shouldRefreshRefetchedObjects];
-        [fetchListsRequest setSortDescriptors:@[displayOrder]];
-        lists.lists = [[managedObjectContext executeFetchRequest:fetchListsRequest error:nil] mutableCopy];
         return;
     }
     
