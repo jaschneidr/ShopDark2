@@ -59,9 +59,15 @@
     
     if (self.singleList)
     {
+        // Take care of placeholder text and color
+        NSString *itemsPlaceholderText = @"Add a new item to the list";
+        UIColor *placeholderTextColor = [UIColor whiteColor];
+        self.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:itemsPlaceholderText attributes:@{NSForegroundColorAttributeName: placeholderTextColor}];
+        
+        // deal with setting button states
+        
         self.returnToListsButton.enabled = YES;
         self.returnToListsButton.hidden = NO;
-        
         if (self.hide)
         {
             self.hideButton.enabled = NO;
@@ -79,7 +85,13 @@
     }
     else
     {
+        // Take care of placeholder text and color
+        NSString *listPlaceholderText = @"Add a new list";
+        UIColor *placeholderTextColor = [UIColor whiteColor];
+        self.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:listPlaceholderText attributes:@{NSForegroundColorAttributeName: placeholderTextColor}];
+        
         self.returnToListsButton.hidden = YES;
+        self.returnToListsButton.enabled = NO;
         self.hideButton.hidden = YES;
         self.showButton.hidden = YES;
     }
@@ -180,7 +192,7 @@
             [cell.textLabel setText:[NSString stringWithFormat:@"%@", [listItem valueForKey:@"itemName"]]];
             // Customize font, text color, and size
             cell.textLabel.textColor = [UIColor whiteColor];
-            UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 12.0];
+            UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 15.0];
             cell.textLabel.font = cellFont;
             
             BOOL completed = [[listItem valueForKey:@"completed"] boolValue];
@@ -207,7 +219,7 @@
         [cell.textLabel setText:[NSString stringWithFormat:@"%@", [list valueForKey:@"listName"]]];
         // Customize font, text color, and size
         cell.textLabel.textColor = [UIColor whiteColor];
-        UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 15.0];
+        UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 18.0];
         cell.textLabel.font = cellFont;
         return cell;
     }
@@ -404,10 +416,12 @@
     }
     else
     {
-        
         UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
         [self.tableView addGestureRecognizer:gestureRecognizer];
     }
+    NSString *blank = @"";
+    UIColor *placeholderTextColor = [UIColor whiteColor];
+    self.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:blank attributes:@{NSForegroundColorAttributeName: placeholderTextColor}];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
@@ -431,9 +445,7 @@
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    NSString *segueIdentity = [segue identifier];
-    NSString *segueSender = sender;
-    NSLog(@"segue ID: %@, sender: %@", segueIdentity, segueSender);
+    
     if ([[segue identifier] isEqualToString:@"loadShoppingList"])
     {
         NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
