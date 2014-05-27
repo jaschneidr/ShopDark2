@@ -22,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *hideButton;
 @property (weak, nonatomic) IBOutlet UIButton *showButton;
 @property (weak, nonatomic) IBOutlet UIButton *returnToListsButton;
+@property (nonatomic, assign) id<UIGestureRecognizerDelegate> delegate;
 @property (nonatomic, getter = isEditing) BOOL editing;
 @property BOOL singleList;
 @property BOOL hide;
@@ -90,7 +91,6 @@
 {
     [super viewDidLoad];
     self.returnToListsButton.enabled = NO;
-    self.lists = [[NSMutableArray alloc] init];
     self.windowTitle.textColor = [UIColor whiteColor];
     
     self.tableView.backgroundColor = [UIColor blackColor];
@@ -105,7 +105,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self.tableView reloadData];
     
 }
 
@@ -208,7 +207,7 @@
         [cell.textLabel setText:[NSString stringWithFormat:@"%@", [list valueForKey:@"listName"]]];
         // Customize font, text color, and size
         cell.textLabel.textColor = [UIColor whiteColor];
-        UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 12.0];
+        UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 15.0];
         cell.textLabel.font = cellFont;
         return cell;
     }
@@ -399,8 +398,16 @@
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
     // add gesture recognizer to recognize taps within the table view for keyboard dismissal
-    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
-    [self.tableView addGestureRecognizer:gestureRecognizer];
+    if (self.singleList) {
+        UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+        [self.listItemsTableView addGestureRecognizer:gestureRecognizer];
+    }
+    else
+    {
+        
+        UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+        [self.tableView addGestureRecognizer:gestureRecognizer];
+    }
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
@@ -424,7 +431,9 @@
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    
+    NSString *segueIdentity = [segue identifier];
+    NSString *segueSender = sender;
+    NSLog(@"segue ID: %@, sender: %@", segueIdentity, segueSender);
     if ([[segue identifier] isEqualToString:@"loadShoppingList"])
     {
         NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
@@ -438,7 +447,7 @@
     
     else if ([[segue identifier] isEqualToString:@"keyboardReturn"])
     {
-        if (sender == self.textField.delegate)
+        if ((sender == self.textField.delegate) && (self.textField.text.length > 0))
         {
             // Create and save a new managed object List
             DLSViewController *lists = [segue destinationViewController];
@@ -449,6 +458,17 @@
             lists.singleList = NO;
             [lists.tableView reloadData];
             return;
+        }
+        else
+        {
+            DLSViewController *lists = [segue destinationViewController];
+            NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+            
+            lists.hide = self.hide;
+            lists.singleList = NO;
+            lists.tappedList = self.tappedList;
+            lists.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+            [lists.tableView reloadData];
         }
     }
     
@@ -469,11 +489,39 @@
                 
                 
                 listView.singleList = YES;
+                listView.hide = self.hide;
                 listView.tappedList = self.tappedList;
                 listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
                 [listView.tableView reloadData];
                 [self saveStatus:newListItem];
                 return;
+            }
+        }
+        else
+        {
+            DLSViewController *listView = [segue destinationViewController];
+            NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+            NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
+                
+            if (self.hide)
+            {
+                NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
+                    
+                listView.hide = self.hide;
+                listView.singleList = YES;
+                listView.tappedList = self.tappedList;
+                placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
+                [placeholderArray sortUsingDescriptors:@[sort]];
+                listView.listItems = placeholderArray;
+                [listView.tableView reloadData];
+            }
+            else
+            {
+                listView.hide = self.hide;
+                listView.singleList = YES;
+                listView.tappedList = self.tappedList;
+                listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+                [listView.tableView reloadData];
             }
         }
     }
@@ -482,9 +530,9 @@
     {
         DLSViewController *listView = [segue destinationViewController];
         NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-
         NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
         NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
+        
         listView.hide = YES;
         listView.singleList = YES;
         listView.tappedList = self.tappedList;
@@ -588,7 +636,13 @@
 
 -(void)dismissKeyboard
 {
+    if (self.singleList)
+    {
+        [self.listItemsTableView reloadData];
+        self.singleList = YES;
+    }
     [self.textField resignFirstResponder];
+    
 }
 
 
