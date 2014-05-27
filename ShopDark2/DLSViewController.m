@@ -16,8 +16,8 @@
 @property NSMutableArray *listItems;
 @property BOOL singleList;
 @property DLSListItem *listItem;
+@property DLSList *tappedList;
 @property NSString *shoppingListName;
-@property NSString *windowTitleText;
 @property (weak, nonatomic) IBOutlet UILabel *windowTitle;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
 @property (nonatomic, assign) IBOutlet UITableView *tableView;
@@ -51,13 +51,14 @@
     [super viewDidLoad];
     self.returnToListsButton.enabled = NO;
     self.lists = [[NSMutableArray alloc] init];
+    self.windowTitle.textColor = [UIColor whiteColor];
     
     self.tableView.backgroundColor = [UIColor blackColor];
     [self.tableView reloadData];
     // Do any additional setup after loading the view.
     if (self.singleList)
     {
-        self.windowTitle.text = self.windowTitleText;
+        self.windowTitle.text = self.shoppingListName;
     }
 }
 
@@ -147,6 +148,17 @@
         cell.textLabel.textColor = [UIColor whiteColor];
         UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size: 12.0];
         cell.textLabel.font = cellFont;
+        
+        BOOL completed = [[listItem valueForKey:@"completed"] boolValue];
+        if (completed)
+        {
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        }
+        else
+        {
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+        
         return cell;
     }
     
@@ -201,8 +213,10 @@
     else
     {
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
-        DLSList *tappedItem = [self.lists objectAtIndex:indexPath.row];
-        self.shoppingListName = tappedItem.listName;
+        self.tappedList = [self.lists objectAtIndex:indexPath.row];
+        self.shoppingListName = self.tappedList.listName;
+        self.windowTitle.text = self.shoppingListName;
+        [self performSegueWithIdentifier:@"loadShoppingList" sender:self];
     }
 }
 
@@ -372,19 +386,21 @@
         NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
         NSFetchRequest *fetchListItemsRequest = [[NSFetchRequest alloc] init];
         NSSortDescriptor *displayOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"belongsToList like %@", self.shoppingListName];
+        
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"belongsToList like %@", self.tappedList];
         NSError *error;
         DLSViewController *listView = [segue destinationViewController];
         
         listView.shoppingListName = self.shoppingListName;
         listView.singleList = YES;
         
-        if (listView.listItems == nil)
+        if (listView.listItems.count == 0)
         {
             listView.listItems = [[NSMutableArray alloc] init];
             listView.singleList = YES;
-            listView.windowTitleText = self.shoppingListName;
-            [placeholder setValue:@"Add a new list" forKey:@"itemName"];
+            listView.windowTitle.text = self.shoppingListName;
+            [placeholder setValue:@"Begin adding list items" forKey:@"itemName"];
+            listView.listItems[0] = placeholder;
         }
         else
         {
@@ -392,11 +408,12 @@
             [fetchListItemsRequest setPredicate:predicate];
             [fetchListItemsRequest shouldRefreshRefetchedObjects];
             [fetchListItemsRequest setSortDescriptors:@[displayOrder]];
-            self.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:&error] mutableCopy];
+            listView.listItems = [[managedObjectContext executeFetchRequest:fetchListItemsRequest error:&error] mutableCopy];
             
             // access parent entity list's listName and set self.windowTitle.text to its value
             listView.singleList = YES;
             listView.windowTitle.text = self.shoppingListName;
+            listView.windowTitle.textColor = [UIColor whiteColor];
         }
         [listView.tableView reloadData];
         
@@ -426,17 +443,22 @@
     {
         DLSViewController *listView = [segue destinationViewController];
         listView.singleList = YES;
+        
         if (self.textField.text.length > 0)
         {
             DLSViewController *listView = [segue destinationViewController];
-            if ([placeholder.itemName isEqualToString:@"Begin adding new items"])
+            
+            if ((listView.listItems.count == 1) && ([[[listView.listItems objectAtIndex:0] valueForKey:@"itemName"] isEqualToString:@"Begin adding list items"]))
             {
-                [listView.listItems removeObject:placeholder];
+                [listView.listItems removeObjectAtIndex:0];
             }
             
             DLSListItem *newListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
+            
+            
             [newListItem setValue:self.textField.text forKey:@"itemName"];
             [newListItem setValue:[NSNumber numberWithInt:[self.listItems count]] forKey:@"displayOrder"];
+            [newListItem setValue:self.tappedList forKey:@"belongsToList"];
             
             NSError *error = nil;
             if (![managedObjectContext save:&error])

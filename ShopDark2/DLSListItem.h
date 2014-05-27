@@ -18,4 +18,5 @@
 @property (nonatomic, retain) NSString * itemName;
 @property (nonatomic, retain) DLSList *belongsToList;
 
+
 @end
