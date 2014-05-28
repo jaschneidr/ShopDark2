@@ -394,10 +394,10 @@
                 return;
             }
             
-            //Remove the toDo from the table View
+            //Remove the item from the table View
             NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
             self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-            [self.tableView reloadData];
+            [self performSegueWithIdentifier:@"fade" sender:self];
         }
         
         else
@@ -411,9 +411,9 @@
                 return;
             }
             
-            //Remove the toDo from the table View
+            //Remove the item from the table View
             [self.lists removeObjectAtIndex:indexPath.row];
-            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:NO];
         }
         
     }
