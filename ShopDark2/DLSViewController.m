@@ -14,6 +14,7 @@
 
 @property NSMutableArray *lists;
 @property NSMutableArray *listItems;
+@property NSUInteger completedToHide;
 @property DLSList *tappedList;
 @property (weak, nonatomic) IBOutlet UILabel *windowTitle;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
@@ -56,6 +57,28 @@
     [getParentLists setSortDescriptors:@[sort]];
     [getParentLists shouldRefreshRefetchedObjects];
     self.lists = [[managedObjectContext executeFetchRequest:getParentLists error:nil] mutableCopy];
+    
+    // set the value of hide appropriately based on stored default
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"hideCompleted"])
+    {
+        self.hide = YES;
+        
+        // set array for self.listItems based on predicate
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+        NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
+        NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
+        placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
+        [placeholderArray sortUsingDescriptors:@[sort]];
+        self.listItems = placeholderArray;
+
+    }
+    else
+    {
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+        self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+    }
+    
+    
     
     if (self.singleList)
     {
@@ -154,7 +177,14 @@
     // if list has been tapped, return shoppingList.listItems count
     if (self.singleList)
     {
-        return [self.listItems count];
+        if (self.hide)
+        {
+            return [self.listItems count] - self.completedToHide;
+        }
+        else
+        {
+            return [self.listItems count];
+        }
     }
     else
     {
@@ -170,8 +200,12 @@
     
     if (self.hide)
     {
-        itemsInListAtIndex = self.listItems;
+        NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
+        NSMutableArray *placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
+        [placeholderArray sortUsingDescriptors:@[sort]];
+        itemsInListAtIndex = placeholderArray;
     }
+    
     else
     {
         itemsInListAtIndex = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
@@ -234,6 +268,8 @@
     if (self.singleList)
     {
         NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+        NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:YES]];
+        NSMutableArray *placeholder = [[NSMutableArray alloc] init];
         
         // If the item is tapped, set the completed value to TRUE
         
@@ -244,14 +280,38 @@
             [tappedItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
             [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
             [self saveStatus:tappedItem];
-            self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+            if (self.hide)
+            {
+                placeholder = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+                [placeholder filteredArrayUsingPredicate:hideCompleted];
+                self.listItems = placeholder;
+            }
+            else
+            {
+                self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+            }
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+            [self performSegueWithIdentifier:@"fade" sender:self];
         }
         else
         {
             [tappedItem setValue:[NSNumber numberWithBool:YES] forKey:@"completed"];
-            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
             [self saveStatus:tappedItem];
-            self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+            
+            if (self.hide)
+            {
+                placeholder = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+                [placeholder filteredArrayUsingPredicate:hideCompleted];
+                self.listItems = placeholder;
+            }
+            else
+            {
+                self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+                placeholder = self.listItems;
+            }
+            
+            self.listItems = placeholder;
+            [self performSegueWithIdentifier:@"fade" sender:self];
         }
     }
     
@@ -540,30 +600,37 @@
     
     else if ([[segue identifier] isEqualToString:@"hideCompleted"])
     {
-        DLSViewController *listView = [segue destinationViewController];
-        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-        NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
-        NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
         
+        // set default appropriately
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool:YES forKey:@"hideCompleted"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        DLSViewController *listView = [segue destinationViewController];
         listView.hide = YES;
         listView.singleList = YES;
         listView.tappedList = self.tappedList;
-        placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
-        [placeholderArray sortUsingDescriptors:@[sort]];
-        listView.listItems = placeholderArray;
+        listView.listItems = self.listItems;
         [listView.tableView reloadData];
+       
+        
     }
     
     else if ([[segue identifier] isEqualToString:@"showCompleted"])
     {
+        
+        //set default appropriately
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool:NO forKey:@"hideCompleted"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
         DLSViewController *listView = [segue destinationViewController];
-        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
         
         listView.hide = NO;
         listView.singleList = YES;
         listView.tappedList = self.tappedList;
-        listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
         [listView.tableView reloadData];
+        
     }
     
     else if ([[segue identifier] isEqualToString:@"returnToLists"])
@@ -575,6 +642,29 @@
         return;
     }
     
+    else if ([[segue identifier] isEqualToString:@"fade"])
+    {
+        DLSViewController *listView = [segue destinationViewController];
+        NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+        
+        listView.tappedList = self.tappedList;
+        listView.singleList = YES;
+        if (self.hide)
+        {
+            NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
+            placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
+            [placeholderArray sortUsingDescriptors:@[sort]];
+            listView.listItems = placeholderArray;
+        }
+        else
+        {
+            listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
+            listView.windowTitle.text = self.tappedList.listName;
+            listView.windowTitle.textColor = [UIColor whiteColor];
+        }
+        [listView.tableView reloadData];
+    }
     else
     {
         return;
@@ -656,6 +746,12 @@
     [self.textField resignFirstResponder];
     
 }
+
+-(void)delayedViewReload
+{
+    [self.view setNeedsDisplay];
+}
+
 
 
 @end
