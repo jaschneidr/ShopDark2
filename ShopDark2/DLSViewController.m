@@ -333,7 +333,6 @@
         [objectToMove setValue:rowNumber forKey:@"displayOrder"];
         [self.tableView reloadData];
     }
-    
 }
 
 
@@ -384,8 +383,6 @@
         NSError *error = nil;
         [context save:&error];
     }
-    
-    
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -466,7 +463,7 @@
  */
 
 
-- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     
     if ([[segue identifier] isEqualToString:@"loadShoppingList"])
@@ -545,6 +542,7 @@
                 listView.hide = self.hide;
                 listView.singleList = YES;
                 listView.tappedList = self.tappedList;
+                listView.listItems = self.listItems;
             }
             else
             {
@@ -603,9 +601,7 @@
     {
         return;
     }
-    
     return;
-    
 }
 
 
@@ -632,12 +628,6 @@
     return context;
 }
 
-- (NSValue *)convertNSIntegerToNSValue:(NSInteger)input
-{
-    NSValue *index = [NSNumber numberWithInt:input];
-    return index;
-}
-
 - (void)saveStatus:(NSManagedObject *)managedObject
 {
     NSManagedObjectContext *context = [self managedObjectContext];
@@ -646,17 +636,17 @@
     {
         NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
     }
-    
+}
+
+- (NSValue *)convertNSIntegerToNSValue:(NSInteger)input
+{
+    NSValue *index = [NSNumber numberWithInt:input];
+    return index;
 }
 
 -(void)dismissKeyboard
 {
-    if (self.singleList)
-    {
-        self.singleList = YES;
-    }
     [self.textField resignFirstResponder];
-    
 }
 
 
