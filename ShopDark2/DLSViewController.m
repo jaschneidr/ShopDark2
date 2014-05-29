@@ -61,7 +61,7 @@
     {
         self.hide = YES;
         
-        // set array for self.listItems based on predicate
+        // set filtered array for self.listItems based on predicate
         NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
         NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
         NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
@@ -193,33 +193,17 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-    NSMutableArray *itemsInListAtIndex = [[NSMutableArray alloc] init];
-    
-    if (self.hide)
-    {
-        NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
-        NSMutableArray *placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
-        [placeholderArray sortUsingDescriptors:@[sort]];
-        itemsInListAtIndex = placeholderArray;
-    }
-    
-    else
-    {
-        itemsInListAtIndex = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-        self.listItems = itemsInListAtIndex;
-    }
-    
+
     if (self.singleList)
     {
         NSString *cellIdentifier = @"listItemPrototype";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
         
         
-        // If the itemsInListAtIndex array is populated, do the following
-        if (!(itemsInListAtIndex.count == 0))
+        // If the self.listItems array is populated, do the following
+        if (!(self.listItems.count == 0))
         {
-            DLSListItem *listItem = [itemsInListAtIndex objectAtIndex:indexPath.row];
+            DLSListItem *listItem = [self.listItems objectAtIndex:indexPath.row];
             // Set text according to list name
             [cell.textLabel setText:[NSString stringWithFormat:@"%@", [listItem valueForKey:@"itemName"]]];
             // Customize font, text color, and size
@@ -262,13 +246,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     if (self.singleList)
     {
-        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-        NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:YES]];
-        NSMutableArray *placeholder = [[NSMutableArray alloc] init];
-        
         // If the item is tapped, set the completed value to TRUE
         
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -276,45 +255,30 @@
         BOOL completed = [[tappedItem valueForKey:@"completed"] boolValue];
         if (completed) {
             [tappedItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
-            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
             [self saveStatus:tappedItem];
-            if (self.hide)
-            {
-                placeholder = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-                [placeholder filteredArrayUsingPredicate:hideCompleted];
-                self.listItems = placeholder;
-            }
-            else
-            {
-                self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-            }
-            [self performSegueWithIdentifier:@"fullyReloadTable" sender:self];
+
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:NO];
         }
         else
         {
             [tappedItem setValue:[NSNumber numberWithBool:YES] forKey:@"completed"];
             [self saveStatus:tappedItem];
             
-            if (self.hide)
-            {
-                placeholder = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-                [placeholder filteredArrayUsingPredicate:hideCompleted];
-                self.listItems = placeholder;
+            if (self.hide) {
+                [self.listItems removeObjectAtIndex:indexPath.row];
+                [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
             }
             else
             {
-                self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-                placeholder = self.listItems;
+                [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:NO];
             }
-            
-            self.listItems = placeholder;
-            [self performSegueWithIdentifier:@"fullyReloadTable" sender:self];
         }
     }
     
     else
     {
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        
         self.tappedList = [self.lists objectAtIndex:indexPath.row];
         self.windowTitle.text = self.tappedList.listName;
         [self performSegueWithIdentifier:@"loadShoppingList" sender:self];
@@ -351,32 +315,30 @@
 {
     if (self.singleList)
     {
-        DLSListItem *objectToMove = [self.lists objectAtIndex:sourceIndexPath.row];
+        DLSListItem *objectToMove = [self.listItems objectAtIndex:sourceIndexPath.row];
         [self.listItems removeObjectAtIndex:sourceIndexPath.row];
         [self.listItems insertObject:objectToMove atIndex:destinationIndexPath.row];
         
-        //    NSInteger sourceIndex = sourceIndexPath.row;
-        NSInteger destinationIndex = destinationIndexPath.row;
-        NSValue *rowNumber = [self convertNSIntegerToNSValue:&destinationIndex];
+        NSValue *rowNumber = [self convertNSIntegerToNSValue:destinationIndexPath.row];
         [objectToMove setValue:rowNumber forKey:@"displayOrder"];
         [self.tableView reloadData];
     }
-    DLSList *objectToMove = [self.lists objectAtIndex:sourceIndexPath.row];
-    [self.lists removeObjectAtIndex:sourceIndexPath.row];
-    [self.lists insertObject:objectToMove atIndex:destinationIndexPath.row];
+    else
+    {
+        DLSList *objectToMove = [self.lists objectAtIndex:sourceIndexPath.row];
+        [self.lists removeObjectAtIndex:sourceIndexPath.row];
+        [self.lists insertObject:objectToMove atIndex:destinationIndexPath.row];
     
-    //    NSInteger sourceIndex = sourceIndexPath.row;
-    NSInteger destinationIndex = destinationIndexPath.row;
-    NSValue *rowNumber = [self convertNSIntegerToNSValue:&destinationIndex];
-    [objectToMove setValue:rowNumber forKey:@"displayOrder"];
-    [self.tableView reloadData];
+        NSValue *rowNumber = [self convertNSIntegerToNSValue:destinationIndexPath.row];
+        [objectToMove setValue:rowNumber forKey:@"displayOrder"];
+        [self.tableView reloadData];
+    }
     
 }
 
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSManagedObjectContext *context = [self managedObjectContext];
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         
@@ -384,41 +346,50 @@
         {
             // Delete Object from the database
             [self.tappedList removeItemsInListObject:[self.listItems objectAtIndex:indexPath.row]];
-            
-            NSError *error = nil;
-            if (![context save:&error]) {
-                NSLog(@"Can't delete! %@ %@", error, [error localizedDescription]);
-                return;
-            }
+            [self saveStatus:self.tappedList];
             
             //Remove the item from the table View
+            [self.listItems removeObjectAtIndex:indexPath.row];
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
+            
+            // Update display order
             NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-            self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-            [self performSegueWithIdentifier:@"fullyReloadTable" sender:self];
+            NSArray *parentList = [[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]];
+            int i = 0;
+            for (DLSListItem *item in parentList)
+            {
+                item.displayOrder = [NSNumber numberWithInt:i++];
+            }
+            
         }
-        
         else
         {
             // Delete Object from the database
-            [context deleteObject:[self.lists objectAtIndex:indexPath.row]];
-            
-            NSError *error = nil;
-            if (![context save:&error]) {
-                NSLog(@"Can't delete! %@ %@", error, [error localizedDescription]);
-                return;
-            }
+            [[self managedObjectContext] deleteObject:[self.lists objectAtIndex:indexPath.row]];
+            [self saveStatus:[self.lists objectAtIndex:indexPath.row]];
             
             //Remove the item from the table View
             [self.lists removeObjectAtIndex:indexPath.row];
-            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:NO];
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
+            
+            // Update display Order
+            int i = 0;
+            for (DLSList *list in self.lists)
+            {
+                list.displayOrder = [NSNumber numberWithInt:i++];
+            }
         }
         
+        NSManagedObjectContext *context = [self managedObjectContext];
+        NSError *error = nil;
+        [context save:&error];
     }
     
     
 }
 
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
     [super setEditing:editing animated:animated];
     [self.tableView setEditing:editing animated:animated];
     if(!editing)
@@ -444,7 +415,8 @@
         [context save:&error];
     }
 }
-
+ 
+ 
 //
 //
 // Text Field
@@ -515,11 +487,13 @@
             // Create and save a new managed object List
             DLSViewController *lists = [segue destinationViewController];
             DLSList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
+            NSUInteger displayOrder = [self.lists count] +1;
+            
+            
             [newList setValue:self.textField.text forKey:@"listName"];
-            [newList setValue:[NSNumber numberWithInt:[self.lists count]] forKey:@"displayOrder"];
+            [newList setValue:[NSNumber numberWithInt:displayOrder] forKey:@"displayOrder"];
             [self saveStatus:newList];
             lists.singleList = NO;
-            [lists.tableView reloadData];
             return;
         }
         else
@@ -531,7 +505,6 @@
             lists.singleList = NO;
             lists.tappedList = self.tappedList;
             lists.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-            [lists.tableView reloadData];
         }
     }
     
@@ -545,8 +518,11 @@
                 NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
                 DLSListItem *newListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ListItem" inManagedObjectContext:[self managedObjectContext]];
                 
+                // Set display order
+                NSUInteger displayOrder = [[self.tappedList.itemsInList allObjects] count] +1;
+                
                 [newListItem setValue:self.textField.text forKey:@"itemName"];
-                [newListItem setValue:[NSNumber numberWithInt:[self.listItems count]] forKey:@"displayOrder"];
+                [newListItem setValue:[NSNumber numberWithInt:displayOrder] forKey:@"displayOrder"];
                 [newListItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
                 [self.tappedList addItemsInListObject:newListItem];
                 
@@ -555,7 +531,6 @@
                 listView.hide = self.hide;
                 listView.tappedList = self.tappedList;
                 listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-                [listView.tableView reloadData];
                 [self saveStatus:newListItem];
                 return;
             }
@@ -564,19 +539,12 @@
         {
             DLSViewController *listView = [segue destinationViewController];
             NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-            NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
                 
             if (self.hide)
             {
-                NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
-                    
                 listView.hide = self.hide;
                 listView.singleList = YES;
                 listView.tappedList = self.tappedList;
-                placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
-                [placeholderArray sortUsingDescriptors:@[sort]];
-                listView.listItems = placeholderArray;
-                [listView.tableView reloadData];
             }
             else
             {
@@ -584,7 +552,6 @@
                 listView.singleList = YES;
                 listView.tappedList = self.tappedList;
                 listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-                [listView.tableView reloadData];
             }
         }
     }
@@ -602,7 +569,6 @@
         listView.singleList = YES;
         listView.tappedList = self.tappedList;
         listView.listItems = self.listItems;
-        [listView.tableView reloadData];
        
         
     }
@@ -620,42 +586,19 @@
         listView.hide = NO;
         listView.singleList = YES;
         listView.tappedList = self.tappedList;
-        [listView.tableView reloadData];
         
     }
     
     else if ([[segue identifier] isEqualToString:@"returnToLists"])
     {
         DLSViewController *lists = [segue destinationViewController];
+        
         lists.windowTitle.text = @"My ShopDark Lists";
         lists.singleList = NO;
         lists.hide = NO;
         return;
     }
-    
-    else if ([[segue identifier] isEqualToString:@"fullyReloadTable"])
-    {
-        DLSViewController *listView = [segue destinationViewController];
-        NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
-        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-        
-        listView.tappedList = self.tappedList;
-        listView.singleList = YES;
-        if (self.hide)
-        {
-            NSMutableArray *placeholderArray = [[NSMutableArray alloc] init];
-            placeholderArray = [[self.listItems filteredArrayUsingPredicate:hideCompleted] mutableCopy];
-            [placeholderArray sortUsingDescriptors:@[sort]];
-            listView.listItems = placeholderArray;
-        }
-        else
-        {
-            listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-            listView.windowTitle.text = self.tappedList.listName;
-            listView.windowTitle.textColor = [UIColor whiteColor];
-        }
-        [listView.tableView reloadData];
-    }
+
     else
     {
         return;
@@ -663,26 +606,6 @@
     
     return;
     
-}
-
-- (IBAction)returnToLists:(UIStoryboardSegue *)segue
-{
-
-}
-
-- (IBAction)keyboardReturn:(UIStoryboardSegue *)segue
-{
-
-}
-
-- (IBAction)keyboardReturnAddItem:(UIStoryboardSegue *)segue
-{
-    
-}
-
-- (IBAction)loadShoppingList:(UIStoryboardSegue *)segue
-{
-
 }
 
 
@@ -709,16 +632,15 @@
     return context;
 }
 
-- (NSValue *)convertNSIntegerToNSValue:(NSInteger *)input
+- (NSValue *)convertNSIntegerToNSValue:(NSInteger)input
 {
-    NSValue *index = [NSNumber numberWithInt:*input];
+    NSValue *index = [NSNumber numberWithInt:input];
     return index;
 }
 
-- (void)saveStatus:(NSManagedObject *)listItem
+- (void)saveStatus:(NSManagedObject *)managedObject
 {
     NSManagedObjectContext *context = [self managedObjectContext];
-    
     NSError *error = nil;
     if (![context save:&error])
     {
@@ -735,16 +657,6 @@
     }
     [self.textField resignFirstResponder];
     
-}
-
--(void)delayedViewReload
-{
-    [self.view setNeedsDisplay];
-}
-
--(void)delayFullyReloadTable
-{
-    [self performSegueWithIdentifier:@"fullyReloadTable" sender:self];
 }
 
 
