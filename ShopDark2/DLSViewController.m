@@ -25,12 +25,14 @@
 @property (nonatomic, assign) id<UIGestureRecognizerDelegate> delegate;
 @property BOOL singleList;
 @property BOOL hide;
-
+@property BOOL reorderingMode;
 @end
 
 
 
 @implementation DLSViewController
+
+@synthesize reordering;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -649,6 +651,18 @@
     [self.textField resignFirstResponder];
 }
 
-
+- (IBAction)toggleReorder:(id)sender
+{
+    if (self.reordering.on)
+    {
+        [self.reordering setOn:FALSE animated:YES];
+        self.reordering = NO;
+    }
+    else if (!self.reordering)
+    {
+        [self.reordering setOn:FALSE animated:YES];
+        self.reordering = NO;
+    }
+}
 
 @end

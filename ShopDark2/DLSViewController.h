@@ -12,4 +12,8 @@
 
 <UITableViewDelegate, UITableViewDataSource>
 
+@property (weak, nonatomic) IBOutlet UISwitch *reordering;
+
+- (IBAction)toggleReorder:(id)sender;
+
 @end

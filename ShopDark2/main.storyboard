@@ -53,7 +53,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="fE4-QW-Y6p">
                                 <rect key="frame" x="20" y="103" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.23528787364130432" green="0.23528787364130432" blue="0.23528787364130432" alpha="0.66000000000000003" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.2352878736" green="0.2352878736" blue="0.2352878736" alpha="0.66000000000000003" colorSpace="calibratedRGB"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" keyboardAppearance="alert" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
@@ -69,6 +69,21 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Cb4-D1-sGh">
+                                <rect key="frame" x="20" y="520" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="onTintColor" red="0.2352878736" green="0.2352878736" blue="0.2352878736" alpha="0.66000000000000003" colorSpace="calibratedRGB"/>
+                                <connections>
+                                    <action selector="toggleReorder:" destination="nHx-Yu-AQE" eventType="valueChanged" id="8JW-lF-Gug"/>
+                                </connections>
+                            </switch>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Reordering" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u5G-KX-jS3">
+                                <rect key="frame" x="77" y="525" width="76" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="14"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -78,6 +93,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="reordering" destination="Cb4-D1-sGh" id="rIZ-BZ-3Qo"/>
                         <outlet property="tableView" destination="M9s-xI-z8G" id="7ys-L9-q5l"/>
                         <outlet property="textField" destination="fE4-QW-Y6p" id="2HJ-32-YqG"/>
                         <outlet property="windowTitle" destination="41G-4A-lqU" id="cy3-EM-J8A"/>
@@ -156,10 +172,10 @@
                                     <outlet property="delegate" destination="hhY-A5-NkN" id="cCq-bo-ddY"/>
                                 </connections>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v7c-uV-3aq">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v7c-uV-3aq">
                                 <rect key="frame" x="20" y="521" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="16"/>
+                                <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="14"/>
                                 <state key="normal" title="Hide Completed Items">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -167,17 +183,25 @@
                                     <segue destination="hhY-A5-NkN" kind="modal" identifier="hideCompleted" animates="NO" id="aV3-8I-I7x"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yYT-K0-UbE">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yYT-K0-UbE">
                                 <rect key="frame" x="20" y="521" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="16"/>
+                                <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="14"/>
                                 <state key="normal" title="Show All Items">
+                                    <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <segue destination="hhY-A5-NkN" kind="modal" identifier="showCompleted" animates="NO" id="Xgs-xs-2r6"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Reordering" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1UK-bF-287">
+                                <rect key="frame" x="77" y="525" width="76" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="14"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6LC-iI-xzE">
                                 <rect key="frame" x="20" y="60" width="64" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -189,6 +213,14 @@
                                     <segue destination="nHx-Yu-AQE" kind="modal" identifier="returnToLists" animates="NO" id="Jaf-BQ-TwR"/>
                                 </connections>
                             </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="NW5-uF-VwZ">
+                                <rect key="frame" x="20" y="520" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="onTintColor" red="0.2352878736" green="0.2352878736" blue="0.2352878736" alpha="0.66000000000000003" colorSpace="calibratedRGB"/>
+                                <connections>
+                                    <action selector="toggleReorder:" destination="hhY-A5-NkN" eventType="valueChanged" id="JPg-B7-YjY"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -196,6 +228,7 @@
                     <connections>
                         <outlet property="hideButton" destination="v7c-uV-3aq" id="jxV-gi-MM3"/>
                         <outlet property="listItemsTableView" destination="WiO-5a-qtp" id="bBh-1b-bhq"/>
+                        <outlet property="reordering" destination="NW5-uF-VwZ" id="A2z-GG-TRI"/>
                         <outlet property="returnToListsButton" destination="6LC-iI-xzE" id="mPF-f1-xR2"/>
                         <outlet property="showButton" destination="yYT-K0-UbE" id="vBY-9E-wbF"/>
                         <outlet property="tableView" destination="WiO-5a-qtp" id="jDH-uz-MVo"/>
