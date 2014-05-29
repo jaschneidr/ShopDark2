@@ -14,7 +14,6 @@
 
 @property NSMutableArray *lists;
 @property NSMutableArray *listItems;
-@property NSUInteger completedToHide;
 @property DLSList *tappedList;
 @property (weak, nonatomic) IBOutlet UILabel *windowTitle;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
@@ -24,7 +23,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *showButton;
 @property (weak, nonatomic) IBOutlet UIButton *returnToListsButton;
 @property (nonatomic, assign) id<UIGestureRecognizerDelegate> delegate;
-@property (nonatomic, getter = isEditing) BOOL editing;
 @property BOOL singleList;
 @property BOOL hide;
 
@@ -179,7 +177,7 @@
     {
         if (self.hide)
         {
-            return [self.listItems count] - self.completedToHide;
+            return [self.listItems count];
         }
         else
         {
@@ -290,8 +288,7 @@
             {
                 self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
             }
-            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-            [self performSegueWithIdentifier:@"fade" sender:self];
+            [self performSegueWithIdentifier:@"fullyReloadTable" sender:self];
         }
         else
         {
@@ -311,7 +308,7 @@
             }
             
             self.listItems = placeholder;
-            [self performSegueWithIdentifier:@"fade" sender:self];
+            [self performSegueWithIdentifier:@"fullyReloadTable" sender:self];
         }
     }
     
@@ -397,7 +394,7 @@
             //Remove the item from the table View
             NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
             self.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-            [self performSegueWithIdentifier:@"fade" sender:self];
+            [self performSegueWithIdentifier:@"fullyReloadTable" sender:self];
         }
         
         else
@@ -469,16 +466,10 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    // add gesture recognizer to recognize taps within the table view for keyboard dismissal
-    if (self.singleList) {
-        UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
-        [self.listItemsTableView addGestureRecognizer:gestureRecognizer];
-    }
-    else
-    {
-        UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
-        [self.tableView addGestureRecognizer:gestureRecognizer];
-    }
+
+    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    [self.tableView addGestureRecognizer:gestureRecognizer];
+    
     NSString *blank = @"";
     UIColor *placeholderTextColor = [UIColor whiteColor];
     self.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:blank attributes:@{NSForegroundColorAttributeName: placeholderTextColor}];
@@ -642,7 +633,7 @@
         return;
     }
     
-    else if ([[segue identifier] isEqualToString:@"fade"])
+    else if ([[segue identifier] isEqualToString:@"fullyReloadTable"])
     {
         DLSViewController *listView = [segue destinationViewController];
         NSPredicate *hideCompleted = [NSPredicate predicateWithFormat:@"completed == %@", [NSNumber numberWithBool:NO]];
@@ -740,7 +731,6 @@
 {
     if (self.singleList)
     {
-        [self.listItemsTableView reloadData];
         self.singleList = YES;
     }
     [self.textField resignFirstResponder];
@@ -750,6 +740,11 @@
 -(void)delayedViewReload
 {
     [self.view setNeedsDisplay];
+}
+
+-(void)delayFullyReloadTable
+{
+    [self performSegueWithIdentifier:@"fullyReloadTable" sender:self];
 }
 
 
