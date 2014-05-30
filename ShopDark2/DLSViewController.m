@@ -146,6 +146,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [self scrollToBottom];
 }
 
 - (void)didReceiveMemoryWarning
@@ -468,18 +469,12 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
-
     UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.tableView addGestureRecognizer:gestureRecognizer];
     
     NSString *blank = @"";
     UIColor *placeholderTextColor = [UIColor whiteColor];
     self.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:blank attributes:@{NSForegroundColorAttributeName: placeholderTextColor}];
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-    [self.textField resignFirstResponder];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -515,7 +510,7 @@
         if ((sender == self.textField.delegate) && (self.textField.text.length > 0))
         {
             // Create and save a new managed object List
-            DLSViewController *lists = [segue destinationViewController];
+        //    DLSViewController *lists = [segue destinationViewController];
             DLSList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
             NSUInteger displayOrder = [self.lists count] +1;
             
@@ -523,19 +518,10 @@
             [newList setValue:self.textField.text forKey:@"listName"];
             [newList setValue:[NSNumber numberWithInt:displayOrder] forKey:@"displayOrder"];
             [self saveStatus:newList];
-            lists.singleList = NO;
+        //    lists.singleList = NO;
             return;
         }
-        else
-        {
-            DLSViewController *lists = [segue destinationViewController];
-            NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-            
-            lists.hide = self.hide;
-            lists.singleList = NO;
-            lists.tappedList = self.tappedList;
-            lists.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-        }
+
     }
     
     else if ([[segue identifier] isEqualToString:@"keyboardReturnAddItem"])
@@ -596,6 +582,7 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         DLSViewController *listView = [segue destinationViewController];
+        
         listView.hide = YES;
         listView.singleList = YES;
         listView.tappedList = self.tappedList;
@@ -669,12 +656,15 @@
     {
         NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
     }
+
 }
 
-- (NSValue *)convertNSIntegerToNSValue:(NSInteger)input
+- (void)scrollToBottom
 {
-    NSValue *index = [NSNumber numberWithInt:input];
-    return index;
+    CGPoint bottomOffset = CGPointMake(0, self.tableView.contentSize.height - self.tableView.bounds.size.height);
+    if ( bottomOffset.y > 0 ) {
+        [self.tableView setContentOffset:bottomOffset animated:YES];
+    }
 }
 
 -(void)dismissKeyboard
@@ -685,6 +675,12 @@
 - (void)toggleReorder:(id)sender
 {
     [self.tableView reloadData];
+}
+
+- (NSValue *)convertNSIntegerToNSValue:(NSInteger)input
+{
+    NSValue *index = [NSNumber numberWithInt:input];
+    return index;
 }
 
 @end
