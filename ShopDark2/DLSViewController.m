@@ -25,7 +25,6 @@
 @property (nonatomic, assign) id<UIGestureRecognizerDelegate> delegate;
 @property BOOL singleList;
 @property BOOL hide;
-@property BOOL reorderingMode;
 @end
 
 
