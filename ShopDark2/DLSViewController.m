@@ -205,6 +205,8 @@
     if (self.reordering.on)
     {
         [self.tableView setEditing:YES];
+        self.hideButton.enabled = NO;
+        self.showButton.enabled = NO;
     }
     else
     {
@@ -272,14 +274,14 @@
         BOOL completed = [[tappedItem valueForKey:@"completed"] boolValue];
         if (completed) {
             [tappedItem setValue:[NSNumber numberWithBool:NO] forKey:@"completed"];
-            [self saveStatus:tappedItem];
+            [self saveStatus];
 
             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:NO];
         }
         else
         {
             [tappedItem setValue:[NSNumber numberWithBool:YES] forKey:@"completed"];
-            [self saveStatus:tappedItem];
+            [self saveStatus];
             
             if (self.hide) {
                 [self.listItems removeObjectAtIndex:indexPath.row];
@@ -336,9 +338,17 @@
         [self.listItems removeObjectAtIndex:sourceIndexPath.row];
         [self.listItems insertObject:objectToMove atIndex:destinationIndexPath.row];
         
-        NSValue *rowNumber = [self convertNSIntegerToNSValue:destinationIndexPath.row];
-        [objectToMove setValue:rowNumber forKey:@"displayOrder"];
+        NSInteger destination = destinationIndexPath.row + 1;
+        NSNumber *rowNumber = [NSNumber numberWithInteger:destination];
+        [objectToMove setDisplayOrder:rowNumber];
         [self.tableView reloadData];
+        
+        int i = 0;
+        for (DLSListItem *item in self.listItems)
+        {
+            item.displayOrder = [NSNumber numberWithInt:i++];
+            [self saveStatus];
+        }
     }
     else
     {
@@ -346,9 +356,17 @@
         [self.lists removeObjectAtIndex:sourceIndexPath.row];
         [self.lists insertObject:objectToMove atIndex:destinationIndexPath.row];
     
-        NSValue *rowNumber = [self convertNSIntegerToNSValue:destinationIndexPath.row];
-        [objectToMove setValue:rowNumber forKey:@"displayOrder"];
+        NSInteger destination = destinationIndexPath.row + 1;
+        NSNumber *rowNumber = [NSNumber numberWithInteger:destination];
+        [objectToMove setDisplayOrder:rowNumber];
         [self.tableView reloadData];
+        
+        int i = 0;
+        for (DLSList *list in self.lists)
+        {
+            list.displayOrder = [NSNumber numberWithInt:i++];
+            [self saveStatus];
+        }
     }
 }
 
@@ -378,7 +396,7 @@
         {
             // Delete Object from the database
             [self.tappedList removeItemsInListObject:[self.listItems objectAtIndex:indexPath.row]];
-            [self saveStatus:self.tappedList];
+            [self saveStatus];
             
             //Remove the item from the table View
             [self.listItems removeObjectAtIndex:indexPath.row];
@@ -398,7 +416,7 @@
         {
             // Delete Object from the database
             [[self managedObjectContext] deleteObject:[self.lists objectAtIndex:indexPath.row]];
-            [self saveStatus:[self.lists objectAtIndex:indexPath.row]];
+            [self saveStatus];
             
             //Remove the item from the table View
             [self.lists removeObjectAtIndex:indexPath.row];
@@ -509,16 +527,13 @@
     {
         if ((sender == self.textField.delegate) && (self.textField.text.length > 0))
         {
-            // Create and save a new managed object List
-        //    DLSViewController *lists = [segue destinationViewController];
             DLSList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:[self managedObjectContext]];
             NSUInteger displayOrder = [self.lists count] +1;
             
             
             [newList setValue:self.textField.text forKey:@"listName"];
             [newList setValue:[NSNumber numberWithInt:displayOrder] forKey:@"displayOrder"];
-            [self saveStatus:newList];
-        //    lists.singleList = NO;
+            [self saveStatus];
             return;
         }
 
@@ -547,7 +562,7 @@
                 listView.hide = self.hide;
                 listView.tappedList = self.tappedList;
                 listView.listItems = [[[self.tappedList.itemsInList allObjects] sortedArrayUsingDescriptors:@[sort]] mutableCopy];
-                [self saveStatus:newListItem];
+                [self saveStatus];
                 return;
             }
         }
@@ -611,7 +626,7 @@
     {
         DLSViewController *lists = [segue destinationViewController];
         
-        lists.windowTitle.text = @"My ShopDark Lists";
+        lists.windowTitle.text = @"ShopDark Lists";
         lists.singleList = NO;
         lists.hide = NO;
         return;
@@ -648,7 +663,7 @@
     return context;
 }
 
-- (void)saveStatus:(NSManagedObject *)managedObject
+- (void)saveStatus
 {
     NSManagedObjectContext *context = [self managedObjectContext];
     NSError *error = nil;
@@ -675,12 +690,6 @@
 - (void)toggleReorder:(id)sender
 {
     [self.tableView reloadData];
-}
-
-- (NSValue *)convertNSIntegerToNSValue:(NSInteger)input
-{
-    NSValue *index = [NSNumber numberWithInt:input];
-    return index;
 }
 
 @end
