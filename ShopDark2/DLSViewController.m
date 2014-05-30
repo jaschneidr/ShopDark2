@@ -135,12 +135,17 @@
     {
         self.windowTitle.text = self.tappedList.listName;
     }
+    if (!self.reordering.on)
+    {
+        [super setEditing:NO animated:YES];
+        [self.reordering setOn:NO animated:YES];
+        [self.tableView reloadData];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
 }
 
 - (void)didReceiveMemoryWarning
@@ -196,6 +201,15 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 
+    if (self.reordering.on)
+    {
+        [self.tableView setEditing:YES];
+    }
+    else
+    {
+        [self.tableView setEditing:NO];
+    }
+    
     if (self.singleList)
     {
         NSString *cellIdentifier = @"listItemPrototype";
@@ -337,6 +351,22 @@
     }
 }
 
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.reordering.on)
+    {
+        return UITableViewCellEditingStyleNone;
+    }
+    else
+    {
+        return UITableViewCellEditingStyleDelete;
+    }
+}
+
+- (BOOL)tableView:(UITableView *)tableview shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return NO;
+}
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -413,6 +443,7 @@
         NSError *error = nil;
         [context save:&error];
     }
+    [self.tableView reloadData];
 }
  
  
@@ -651,18 +682,9 @@
     [self.textField resignFirstResponder];
 }
 
-- (IBAction)toggleReorder:(id)sender
+- (void)toggleReorder:(id)sender
 {
-    if (self.reordering.on)
-    {
-        [self.reordering setOn:FALSE animated:YES];
-        self.reordering = NO;
-    }
-    else if (!self.reordering)
-    {
-        [self.reordering setOn:FALSE animated:YES];
-        self.reordering = NO;
-    }
+    [self.tableView reloadData];
 }
 
 @end
